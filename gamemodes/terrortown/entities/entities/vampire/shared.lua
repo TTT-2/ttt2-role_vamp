@@ -47,6 +47,7 @@ hook.Add("TTT2_FinishedSync", "VampInitT", function(first)
             Otherwise, you will die...]])
 		LANG.AddToLanguage("English", "body_found_" .. ROLES.VAMPIRE.abbr, "This was a Vampire...")
 		LANG.AddToLanguage("English", "search_role_" .. ROLES.VAMPIRE.abbr, "This person was a Vampire!")
+		LANG.AddToLanguage("English", "target_" .. ROLES.VAMPIRE.name, "Vampire")
 	    
 	    -- optional for toggling whether player can avoid the role
 		LANG.AddToLanguage("English", "set_avoid_" .. ROLES.VAMPIRE.abbr, "Avoid being selected as Vampire!")
@@ -63,6 +64,7 @@ hook.Add("TTT2_FinishedSync", "VampInitT", function(first)
             Ansonsten wirst du sterben...]])
 		LANG.AddToLanguage("Deutsch", "body_found_" .. ROLES.VAMPIRE.abbr, "Er war ein Vampir...")
 		LANG.AddToLanguage("Deutsch", "search_role_" .. ROLES.VAMPIRE.abbr, "Diese Person war ein Vampir!")
+		LANG.AddToLanguage("Deutsch", "target_" .. ROLES.VAMPIRE.name, "Vampir")
 	    
 		LANG.AddToLanguage("Deutsch", "set_avoid_" .. ROLES.VAMPIRE.abbr, "Vermeide als Vampir ausgewählt zu werden!")
 		LANG.AddToLanguage("Deutsch", "set_avoid_" .. ROLES.VAMPIRE.abbr .. "_tip", 
