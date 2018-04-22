@@ -35,7 +35,7 @@ AddCustomRole("VAMPIRE", { -- first param is access for ROLES array => ROLES["VA
 })
 
 -- if sync of roles has finished
-hook.Add("TTT2_FinishedSync", "VampInitT", function(first)
+hook.Add("TTT2_FinishedSync", "VampInitT", function(ply, first)
 	if CLIENT and first then -- just on client and first init !
 
 		-- setup here is not necessary but if you want to access the role data, you need to start here
