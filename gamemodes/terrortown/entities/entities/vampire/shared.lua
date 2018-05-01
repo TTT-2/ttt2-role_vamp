@@ -80,7 +80,8 @@ function TransformToVamp(ply)
             savedWeapons[ply:SteamID()] = {}
             
             for _, wep in pairs(ply:GetWeapons()) do
-                table.insert(savedWeapons[ply:SteamID()], wep:GetClass())
+                -- todo save clip too !
+                table.insert(savedWeapons[ply:SteamID()], {cls = wep:GetClass(), clip1 = wep:Clip1(), clip2 = wep:Clip2()})
             end
             
             ply:StripWeapons()
@@ -106,7 +107,9 @@ function TransformToVamp(ply)
             ply:SetNWBool("transformedVamp", false)
             
             for _, wep in pairs(savedWeapons[ply:SteamID()]) do
-                ply:Give(wep)
+                local w = ply:Give(wep.cls)
+                w:SetClip1(wep.clip1)
+                w:SetClip2(wep.clip2)
             end
             
             savedWeapons[ply:SteamID()] = {}
@@ -179,9 +182,22 @@ if SERVER then
             end
         end
     end)
-end
-
-if CLIENT then
+    
+	-- is called if the role has been selected in the normal way of team setup
+	hook.Add("TTT2_RoleTypeSet", "UpdateVampRoleSelect", function(ply)
+		if ply:GetRole() == ROLES.VAMPIRE.index then
+            ply:SetNWBool("InBloodlust", false)
+            ply:SetNWInt("Bloodlust", CurTime() + GetConVar("ttt2_vamp_bloodtime"):GetInt())
+		end
+	end)
+    
+    hook.Add("PlayerDeath", "VampKillsAnotherPly", function(victim, inflictor, attacker)
+        if IsValid(attacker) and attacker:IsPlayer() and attacker:GetRole() == ROLES.VAMPIRE.index then
+            attacker:SetNWBool("InBloodlust", false)
+            attacker:SetNWInt("Bloodlust", CurTime() + GetConVar("ttt2_vamp_bloodtime"):GetInt())
+        end
+    end)
+else
     net.Receive("TTT2VampPigeon", function()
         local ply = LocalPlayer()
     
@@ -285,24 +301,9 @@ if CLIENT then
         settings_tab:SetWide(settings_panel:GetWide() - 30)
         settings_panel:AddItem(settings_tab)
         
-        settings_tab:NumSlider("x-coordinate (position)", "ttt2_vamp_hud_x", 0, 25, 2)
-        settings_tab:NumSlider("y-coordinate (position)", "ttt2_vamp_hud_y", 70, 95, 2)
+        settings_tab:NumSlider("x-coordinate (position)", "ttt2_vamp_hud_x", 0, 40, 2)
+        settings_tab:NumSlider("y-coordinate (position)", "ttt2_vamp_hud_y", 60, 100, 2)
         
         settings_tab:SizeToContents()
-    end)
-else
-	-- is called if the role has been selected in the normal way of team setup
-	hook.Add("TTT2_RoleTypeSet", "UpdateVampRoleSelect", function(ply)
-		if ply:GetRole() == ROLES.VAMPIRE.index then
-            ply:SetNWBool("InBloodlust", false)
-            ply:SetNWInt("Bloodlust", CurTime() + GetConVar("ttt2_vamp_bloodtime"):GetInt())
-		end
-	end)
-    
-    hook.Add("PlayerDeath", "VampKillsAnotherPly", function(victim, inflictor, attacker)
-        if IsValid(attacker) and attacker:IsPlayer() and attacker:GetRole() == ROLES.VAMPIRE.index then
-            attacker:SetNWBool("InBloodlust", false)
-            attacker:SetNWInt("Bloodlust", CurTime() + GetConVar("ttt2_vamp_bloodtime"):GetInt())
-        end
     end)
 end
