@@ -301,8 +301,8 @@ else
         settings_tab:SetWide(settings_panel:GetWide() - 30)
         settings_panel:AddItem(settings_tab)
         
-        settings_tab:NumSlider("x-coordinate (position)", "ttt2_vamp_hud_x", 0, 40, 2)
-        settings_tab:NumSlider("y-coordinate (position)", "ttt2_vamp_hud_y", 60, 100, 2)
+        settings_tab:NumSlider("x-coordinate (position)", "ttt2_vamp_hud_x", 0, ScrW(), 2)
+        settings_tab:NumSlider("y-coordinate (position)", "ttt2_vamp_hud_y", 0, ScrH(), 2)
         
         settings_tab:SizeToContents()
     end)
