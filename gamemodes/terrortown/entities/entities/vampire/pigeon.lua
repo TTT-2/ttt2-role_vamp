@@ -82,7 +82,7 @@ function PIGEON.Ghost(player)
 	local e = ents.Create("prop_dynamic")
 	e:SetAngles(player:GetAngles())
 	e:SetCollisionGroup(COLLISION_GROUP_NONE)
-	e:SetColor(255, 255, 255, 0)
+	e:SetColor(Color(255, 255, 255, 0))
 	e:SetMoveType(MOVETYPE_NONE)
 	e:SetModel(PIGEON.model)
 	e:SetParent(player)
@@ -142,9 +142,9 @@ function PIGEON.Hooks.CalcView(player, pos, ang, fov)
 	local ghost = player:GetNWEntity("pigeon.ghost")
 	if ghost and ghost:IsValid() then
 		if GetViewEntity() == player then
-			ghost:SetColor(255, 255, 255, 255)
+			ghost:SetColor(Color(255, 255, 255, 255))
 		else
-			ghost:SetColor(255, 255, 255, 0)
+			ghost:SetColor(Color(255, 255, 255, 0))
             
 			return
 		end
