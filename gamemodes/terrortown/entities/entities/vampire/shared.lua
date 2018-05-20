@@ -36,40 +36,49 @@ AddCustomRole("VAMPIRE", { -- first param is access for ROLES array => ROLES["VA
 
 -- if sync of roles has finished
 hook.Add("TTT2_FinishedSync", "VampInitT", function(ply, first)
-	if CLIENT and first then -- just on client and first init !
+    if first then -- just on first init !
+        hook.Add("TTTUlxDynamicRCVars", "TTTUlxDynamicVampCVars", function(tbl)
+            tbl[ROLES.VAMPIRE.index] = tbl[ROLES.VAMPIRE.index] or {}
+        
+            table.insert(tbl[ROLES.VAMPIRE.index], {cvar = "ttt2_vamp_bloodtime", slider = true, desc = "vampire bloodlust time"})
+        end)
+        
+        if CLIENT then
+            -- setup here is not necessary but if you want to access the role data, you need to start here
+            -- setup basic translation !
+            LANG.AddToLanguage("English", ROLES.VAMPIRE.name, "Vampire")
+            LANG.AddToLanguage("English", "info_popup_" .. ROLES.VAMPIRE.name, [[You are a Vampire! 
+It's time for some blood!
+Otherwise, you will die...]])
+            LANG.AddToLanguage("English", "body_found_" .. ROLES.VAMPIRE.abbr, "This was a Vampire...")
+            LANG.AddToLanguage("English", "search_role_" .. ROLES.VAMPIRE.abbr, "This person was a Vampire!")
+            LANG.AddToLanguage("English", "target_" .. ROLES.VAMPIRE.name, "Vampire")
+            LANG.AddToLanguage("English", "ttt2_desc_" .. ROLES.SURVIVALIST.name, [[The Vampire is a Traitor (who works together with the other traitors) and the goal is to kill all other roles except the other traitor roles ^^ 
+The vampire CAN'T access the ([C]) shop, but he can transform into a pigeon by pressing [LALT] (Walk-slowly key). To make it balanced, the Vampire needs to kill another player every minute. Otherwise, he will fall into Bloodlust. In Bloodlust, the Vampire loses 1 hp every 2 seconds.
+In Bloodlust, the vampire heals 50% of the damage he did to other players. In addition to that, he can just transform into Pigeon if he is in bloodlust. So you be also able to trigger into bloodlust, but it's not possible to undo it.]])
+            
+            -- optional for toggling whether player can avoid the role
+            LANG.AddToLanguage("English", "set_avoid_" .. ROLES.VAMPIRE.abbr, "Avoid being selected as Vampire!")
+            LANG.AddToLanguage("English", "set_avoid_" .. ROLES.VAMPIRE.abbr .. "_tip", "Enable this to ask the server not to select you as Vampire if possible. Does not mean you are Traitor more often.")
+            
+            ---------------------------------
 
-		-- setup here is not necessary but if you want to access the role data, you need to start here
-		-- setup basic translation !
-		LANG.AddToLanguage("English", ROLES.VAMPIRE.name, "Vampire")
-		LANG.AddToLanguage("English", "info_popup_" .. ROLES.VAMPIRE.name, 
-            [[You are a Vampire! 
-            It's time for some blood!
-            Otherwise, you will die...]])
-		LANG.AddToLanguage("English", "body_found_" .. ROLES.VAMPIRE.abbr, "This was a Vampire...")
-		LANG.AddToLanguage("English", "search_role_" .. ROLES.VAMPIRE.abbr, "This person was a Vampire!")
-		LANG.AddToLanguage("English", "target_" .. ROLES.VAMPIRE.name, "Vampire")
-	    
-	    -- optional for toggling whether player can avoid the role
-		LANG.AddToLanguage("English", "set_avoid_" .. ROLES.VAMPIRE.abbr, "Avoid being selected as Vampire!")
-		LANG.AddToLanguage("English", "set_avoid_" .. ROLES.VAMPIRE.abbr .. "_tip", 
-	        [[Enable this to ask the server not to select you as Vampire if possible. Does not mean you are Traitor more often.]])
-	    
-	    ---------------------------------
-
-		-- maybe this language as well...
-		LANG.AddToLanguage("Deutsch", ROLES.VAMPIRE.name, "Vampir")
-		LANG.AddToLanguage("Deutsch", "info_popup_" .. ROLES.VAMPIRE.name, 
-            [[Du bist ein Vampir! 
-            Es ist Zeit für etwas Blut!
-            Ansonsten wirst du sterben...]])
-		LANG.AddToLanguage("Deutsch", "body_found_" .. ROLES.VAMPIRE.abbr, "Er war ein Vampir...")
-		LANG.AddToLanguage("Deutsch", "search_role_" .. ROLES.VAMPIRE.abbr, "Diese Person war ein Vampir!")
-		LANG.AddToLanguage("Deutsch", "target_" .. ROLES.VAMPIRE.name, "Vampir")
-	    
-		LANG.AddToLanguage("Deutsch", "set_avoid_" .. ROLES.VAMPIRE.abbr, "Vermeide als Vampir ausgewählt zu werden!")
-		LANG.AddToLanguage("Deutsch", "set_avoid_" .. ROLES.VAMPIRE.abbr .. "_tip", 
-	        [[Aktivieren, um beim Server anzufragen, nicht als Vampir ausgewählt zu werden. Das bedeuted nicht, dass du öfter Traitor wirst!]])
-	end
+            -- maybe this language as well...
+            LANG.AddToLanguage("Deutsch", ROLES.VAMPIRE.name, "Vampir")
+            LANG.AddToLanguage("Deutsch", "info_popup_" .. ROLES.VAMPIRE.name, [[Du bist ein Vampir! 
+Es ist Zeit für etwas Blut!
+Ansonsten wirst du sterben...]])
+            LANG.AddToLanguage("Deutsch", "body_found_" .. ROLES.VAMPIRE.abbr, "Er war ein Vampir...")
+            LANG.AddToLanguage("Deutsch", "search_role_" .. ROLES.VAMPIRE.abbr, "Diese Person war ein Vampir!")
+            LANG.AddToLanguage("Deutsch", "target_" .. ROLES.VAMPIRE.name, "Vampir")
+            LANG.AddToLanguage("English", "ttt2_desc_" .. ROLES.SURVIVALIST.name, [[Der Vampir ist ein Verräter (der mit den anderen Verräter-Rollen zusammenarbeitet) und dessen Ziel es ist, alle anderen Rollen (außer Verräter-Rollen) zu töten ^^ 
+Er kann NICHT den ([C]) Shop betreten, doch dafür kann er sich, wenn er die Taste [LALT] (Walk-slowly Taste) drückt, in eine Taube verwandeln. Damit der Vampir nicht zu stark ist, muss er jede Minute einen anderen Spieler killen. Ansonsten fällt er in den Blutdurst. Im Blutdurst verliert der Vampir jede Sekunde 1hp.
+Allerdings heilt er sich im Blutdurst auch um 50% des Schadens, den er anderen Spielern zufügt. Er kann sich auch nur im Blutdurst transformieren. Du kannst also mit [LALT] den Blutdurst triggern, doch es nicht rückgängig machen.]])
+            
+            LANG.AddToLanguage("Deutsch", "set_avoid_" .. ROLES.VAMPIRE.abbr, "Vermeide als Vampir ausgewählt zu werden!")
+            LANG.AddToLanguage("Deutsch", "set_avoid_" .. ROLES.VAMPIRE.abbr .. "_tip", "Aktivieren, um beim Server anzufragen, nicht als Vampir ausgewählt zu werden. Das bedeuted nicht, dass du öfter Traitor wirst!")
+        end
+    end
 end)
 
 local savedWeapons = savedWeapons or {}
