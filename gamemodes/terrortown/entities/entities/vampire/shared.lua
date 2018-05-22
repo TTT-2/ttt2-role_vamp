@@ -133,6 +133,7 @@ hook.Add("Think", "ThinkVampire", function()
 
     if not hooksInstalled and rs == ROUND_ACTIVE then
         hooksInstalled = true
+		
         PIGEON.HooksEnable()
     end
     
@@ -205,6 +206,10 @@ if SERVER then
             attacker:SetNWBool("InBloodlust", false)
             attacker:SetNWInt("Bloodlust", CurTime() + GetConVar("ttt2_vamp_bloodtime"):GetInt())
         end
+		
+		if victim:GetRole() == ROLES.VAMPIRE.index and victim:GetNWBool("transformedVamp", false) then
+			TransformToVamp(victim)
+		end
     end)
 else
     net.Receive("TTT2VampPigeon", function()
