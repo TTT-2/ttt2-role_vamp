@@ -320,4 +320,19 @@ else
         
         settings_tab:SizeToContents()
     end)
+	
+	-- modify roles table of rolesetup addon
+	hook.Add("TTTAModifyRolesTable", "ModifyRoleVampToTraitor", function(rolesTable)
+		local tmp = {}
+		
+		for _, v in pairs(ROLES) do
+			tmp[v.index] = {}
+		end
+		
+		for role, ply in pairs(rolesTable) do
+			table.insert(tmp[(role == ROLES.VAMPIRE.index and ROLES.TRAITOR.index or role)], ply)
+		end
+		
+		rolesTable = tmp
+	end)
 end
