@@ -1,19 +1,19 @@
-AddCSLuaFile()
-
 include("pigeon.lua")
 
 if SERVER then
-   resource.AddFile("materials/vgui/ttt/icon_vamp.vmt")
-   resource.AddFile("materials/vgui/ttt/sprite_vamp.vmt")
-   
-   util.AddNetworkString("TTT2VampPigeon")
+	AddCSLuaFile()
+
+	resource.AddFile("materials/vgui/ttt/icon_vamp.vmt")
+	resource.AddFile("materials/vgui/ttt/sprite_vamp.vmt")
+
+	util.AddNetworkString("TTT2VampPigeon")
 end
    
-CreateConVar("ttt2_vamp_bloodtime", "60", FCVAR_ARCHIVE + FCVAR_NOTIFY + FCVAR_REPLICATED)
+CreateConVar("ttt2_vamp_bloodtime", "60", {FCVAR_ARCHIVE, FCVAR_NOTIFY, FCVAR_REPLICATED})
 
 -- important to add roles with this function,
 -- because it does more than just access the array ! e.g. updating other arrays
-AddCustomRole("VAMPIRE", { -- first param is access for ROLES array => ROLES["VAMPIRE"] or ROLES["JESTER"]
+AddCustomRole("VAMPIRE", { -- first param is access for ROLES array => ROLES["VAMPIRE"] or ROLES["VAMPIRE"]
 	color = Color(104, 29, 24, 255), -- ...
 	dkcolor = Color(93, 26, 22, 255), -- ...
 	bgcolor = Color(83, 23, 19, 200), -- ...
@@ -26,7 +26,7 @@ AddCustomRole("VAMPIRE", { -- first param is access for ROLES array => ROLES["VA
     surviveBonus = 0.5, -- bonus multiplier for every survive while another player was killed
     scoreKillsMultiplier = 5, -- multiplier for kill of player of another team
     scoreTeamKillsMultiplier = -16, -- multiplier for teamkill
-    showOnConfirm = true -- shows the player on death to each client (e.g. on scoreboard)
+    --showOnConfirm = true -- shows the player on death to each client (e.g. on scoreboard)
 }, {
     pct = 0.1, -- necessary: percentage of getting this role selected (per player)
     maximum = 1, -- maximum amount of roles in a round
@@ -53,7 +53,7 @@ Otherwise, you will die...]])
             LANG.AddToLanguage("English", "body_found_" .. ROLES.VAMPIRE.abbr, "This was a Vampire...")
             LANG.AddToLanguage("English", "search_role_" .. ROLES.VAMPIRE.abbr, "This person was a Vampire!")
             LANG.AddToLanguage("English", "target_" .. ROLES.VAMPIRE.name, "Vampire")
-            LANG.AddToLanguage("English", "ttt2_desc_" .. ROLES.SURVIVALIST.name, [[The Vampire is a Traitor (who works together with the other traitors) and the goal is to kill all other roles except the other traitor roles ^^ 
+            LANG.AddToLanguage("English", "ttt2_desc_" .. ROLES.VAMPIRE.name, [[The Vampire is a Traitor (who works together with the other traitors) and the goal is to kill all other roles except the other traitor roles ^^ 
 The vampire CAN'T access the ([C]) shop, but he can transform into a pigeon by pressing [LALT] (Walk-slowly key). To make it balanced, the Vampire needs to kill another player every minute. Otherwise, he will fall into Bloodlust. In Bloodlust, the Vampire loses 1 hp every 2 seconds.
 In Bloodlust, the vampire heals 50% of the damage he did to other players. In addition to that, he can just transform into Pigeon if he is in bloodlust. So you be also able to trigger into bloodlust, but it's not possible to undo it.]])
             
@@ -71,7 +71,7 @@ Ansonsten wirst du sterben...]])
             LANG.AddToLanguage("Deutsch", "body_found_" .. ROLES.VAMPIRE.abbr, "Er war ein Vampir...")
             LANG.AddToLanguage("Deutsch", "search_role_" .. ROLES.VAMPIRE.abbr, "Diese Person war ein Vampir!")
             LANG.AddToLanguage("Deutsch", "target_" .. ROLES.VAMPIRE.name, "Vampir")
-            LANG.AddToLanguage("English", "ttt2_desc_" .. ROLES.SURVIVALIST.name, [[Der Vampir ist ein Verräter (der mit den anderen Verräter-Rollen zusammenarbeitet) und dessen Ziel es ist, alle anderen Rollen (außer Verräter-Rollen) zu töten ^^ 
+            LANG.AddToLanguage("Deutsch", "ttt2_desc_" .. ROLES.VAMPIRE.name, [[Der Vampir ist ein Verräter (der mit den anderen Verräter-Rollen zusammenarbeitet) und dessen Ziel es ist, alle anderen Rollen (außer Verräter-Rollen) zu töten ^^ 
 Er kann NICHT den ([C]) Shop betreten, doch dafür kann er sich, wenn er die Taste [LALT] (Walk-slowly Taste) drückt, in eine Taube verwandeln. Damit der Vampir nicht zu stark ist, muss er jede Minute einen anderen Spieler killen. Ansonsten fällt er in den Blutdurst. Im Blutdurst verliert der Vampir jede Sekunde 1hp.
 Allerdings heilt er sich im Blutdurst auch um 50% des Schadens, den er anderen Spielern zufügt. Er kann sich auch nur im Blutdurst transformieren. Du kannst also mit [LALT] den Blutdurst triggern, doch es nicht rückgängig machen.]])
             
@@ -141,7 +141,7 @@ hook.Add("Think", "ThinkVampire", function()
         hooksInstalled = false
         
         if SERVER then
-            for _, v in pairs(player.GetAll()) do
+            for _, v in ipairs(player.GetAll()) do
                 if v:GetRole() == ROLES.VAMPIRE.index and v:GetNWBool("transformedVamp", false) then
                     TransformToVamp(v)
                 end
@@ -151,7 +151,7 @@ hook.Add("Think", "ThinkVampire", function()
         PIGEON.HooksDisable()
     end
 
-    for _, ply in pairs(player.GetAll()) do
+    for _, ply in ipairs(player.GetAll()) do
         if ply:IsActive() and ply:GetRole() == ROLES.VAMPIRE.index then
             if ply:GetNWInt("Bloodlust", 0) < CurTime() then
                 ply:SetNWBool("InBloodlust", true)
@@ -323,16 +323,10 @@ else
 	
 	-- modify roles table of rolesetup addon
 	hook.Add("TTTAModifyRolesTable", "ModifyRoleVampToTraitor", function(rolesTable)
-		local tmp = {}
-		
-		for _, v in pairs(ROLES) do
-			tmp[v.index] = {}
+		for role in pairs(rolesTable) do
+			if role == ROLES.VAMPIRE.index then
+				roles[ROLE_INNOCENT] = roles[ROLE_INNOCENT] + roles[ROLES.VAMPIRE.index]
+			end
 		end
-		
-		for role, ply in pairs(rolesTable) do
-			table.insert(tmp[(role == ROLES.VAMPIRE.index and ROLES.TRAITOR.index or role)], ply)
-		end
-		
-		rolesTable = tmp
 	end)
 end
