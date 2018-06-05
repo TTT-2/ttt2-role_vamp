@@ -11,28 +11,30 @@ end
    
 CreateConVar("ttt2_vamp_bloodtime", "60", {FCVAR_ARCHIVE, FCVAR_NOTIFY, FCVAR_REPLICATED})
 
--- important to add roles with this function,
--- because it does more than just access the array ! e.g. updating other arrays
-AddCustomRole("VAMPIRE", { -- first param is access for ROLES array => ROLES["VAMPIRE"] or ROLES["VAMPIRE"]
-	color = Color(104, 29, 24, 255), -- ...
-	dkcolor = Color(93, 26, 22, 255), -- ...
-	bgcolor = Color(83, 23, 19, 200), -- ...
-	name = "vampire", -- just a unique name for the script to determine
-	printName = "Vampire", -- The text that is printed to the player, e.g. in role alert
-	abbr = "vamp", -- abbreviation
-	team = TEAM_TRAITOR, -- the team name: roles with same team name are working together
-	visibleForTraitors = true, -- other traitors can see this role / sync them with traitors
-	defaultEquipment = SPECIAL_EQUIPMENT, -- here you can set up your own default equipment
-    surviveBonus = 0.5, -- bonus multiplier for every survive while another player was killed
-    scoreKillsMultiplier = 5, -- multiplier for kill of player of another team
-    scoreTeamKillsMultiplier = -16, -- multiplier for teamkill
-    --showOnConfirm = true -- shows the player on death to each client (e.g. on scoreboard)
-}, {
-    pct = 0.1, -- necessary: percentage of getting this role selected (per player)
-    maximum = 1, -- maximum amount of roles in a round
-    minPlayers = 10, -- minimum amount of players until this role is able to get selected
-    togglable = true -- option to toggle a role for a client if possible (F1 menu)
-})
+hook.Add("Initialize", "TTT2InitCRoleVamp", function()
+	-- important to add roles with this function,
+	-- because it does more than just access the array ! e.g. updating other arrays
+	AddCustomRole("VAMPIRE", { -- first param is access for ROLES array => ROLES["VAMPIRE"] or ROLES["VAMPIRE"]
+		color = Color(104, 29, 24, 255), -- ...
+		dkcolor = Color(93, 26, 22, 255), -- ...
+		bgcolor = Color(83, 23, 19, 200), -- ...
+		name = "vampire", -- just a unique name for the script to determine
+		printName = "Vampire", -- The text that is printed to the player, e.g. in role alert
+		abbr = "vamp", -- abbreviation
+		team = TEAM_TRAITOR, -- the team name: roles with same team name are working together
+		visibleForTraitors = true, -- other traitors can see this role / sync them with traitors
+		defaultEquipment = SPECIAL_EQUIPMENT, -- here you can set up your own default equipment
+		surviveBonus = 0.5, -- bonus multiplier for every survive while another player was killed
+		scoreKillsMultiplier = 5, -- multiplier for kill of player of another team
+		scoreTeamKillsMultiplier = -16, -- multiplier for teamkill
+		--showOnConfirm = true -- shows the player on death to each client (e.g. on scoreboard)
+	}, {
+		pct = 0.1, -- necessary: percentage of getting this role selected (per player)
+		maximum = 1, -- maximum amount of roles in a round
+		minPlayers = 10, -- minimum amount of players until this role is able to get selected
+		togglable = true -- option to toggle a role for a client if possible (F1 menu)
+	})
+end)
 
 -- if sync of roles has finished
 hook.Add("TTT2_FinishedSync", "VampInitT", function(ply, first)
