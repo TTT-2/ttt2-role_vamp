@@ -26,8 +26,7 @@ hook.Add("Initialize", "TTT2InitCRoleVamp", function()
 		defaultEquipment = SPECIAL_EQUIPMENT, -- here you can set up your own default equipment
 		surviveBonus = 0.5, -- bonus multiplier for every survive while another player was killed
 		scoreKillsMultiplier = 5, -- multiplier for kill of player of another team
-		scoreTeamKillsMultiplier = -16, -- multiplier for teamkill
-		--showOnConfirm = true -- shows the player on death to each client (e.g. on scoreboard)
+		scoreTeamKillsMultiplier = -16 -- multiplier for teamkill
 	}, {
 		pct = 0.1, -- necessary: percentage of getting this role selected (per player)
 		maximum = 1, -- maximum amount of roles in a round
@@ -322,13 +321,4 @@ else
         
         settings_tab:SizeToContents()
     end)
-	
-	-- modify roles table of rolesetup addon
-	hook.Add("TTTAModifyRolesTable", "ModifyRoleVampToTraitor", function(rolesTable)
-		for role in pairs(rolesTable) do
-			if role == ROLES.VAMPIRE.index then
-				roles[ROLE_INNOCENT] = roles[ROLE_INNOCENT] + roles[ROLES.VAMPIRE.index]
-			end
-		end
-	end)
 end
