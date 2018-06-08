@@ -7,8 +7,11 @@ if SERVER then
 	resource.AddFile("materials/vgui/ttt/sprite_vamp.vmt")
 
 	util.AddNetworkString("TTT2VampPigeon")
+else
+	CreateClientConVar("ttt2_vamp_hud_x", "0.8", true, false, "The relative x-coordinate (position) of the HUD. (0-100) Def: 0.8")
+	CreateClientConVar("ttt2_vamp_hud_y", "83.3", true, false, "The relative y-coordinate (position) of the HUD. (0-100) Def: 83.3")
 end
-   
+
 CreateConVar("ttt2_vamp_bloodtime", "60", {FCVAR_ARCHIVE, FCVAR_NOTIFY, FCVAR_REPLICATED})
 
 hook.Add("Initialize", "TTT2InitCRoleVamp", function()
@@ -37,14 +40,14 @@ end)
 
 -- if sync of roles has finished
 hook.Add("TTT2_FinishedSync", "VampInitT", function(ply, first)
-    if first then -- just on first init !
-        hook.Add("TTTUlxDynamicRCVars", "TTTUlxDynamicVampCVars", function(tbl)
-            tbl[ROLES.VAMPIRE.index] = tbl[ROLES.VAMPIRE.index] or {}
-        
-            table.insert(tbl[ROLES.VAMPIRE.index], {cvar = "ttt2_vamp_bloodtime", slider = true, desc = "vampire bloodlust time"})
-        end)
-        
-        if CLIENT then
+    if first then -- just on first init !		
+		hook.Add("TTTUlxDynamicRCVars", "TTTUlxDynamicVampCVars", function(tbl)
+			tbl[ROLES.VAMPIRE.index] = tbl[ROLES.VAMPIRE.index] or {}
+		
+			table.insert(tbl[ROLES.VAMPIRE.index], {cvar = "ttt2_vamp_bloodtime", slider = true, desc = "vampire bloodlust time"})
+		end)
+	
+		if CLIENT then
             -- setup here is not necessary but if you want to access the role data, you need to start here
             -- setup basic translation !
             LANG.AddToLanguage("English", ROLES.VAMPIRE.name, "Vampire")
