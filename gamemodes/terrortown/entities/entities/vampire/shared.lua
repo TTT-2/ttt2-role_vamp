@@ -22,7 +22,6 @@ hook.Add("Initialize", "TTT2InitCRoleVamp", function()
 		dkcolor = Color(93, 26, 22, 255), -- ...
 		bgcolor = Color(83, 23, 19, 200), -- ...
 		name = "vampire", -- just a unique name for the script to determine
-		printName = "Vampire", -- The text that is printed to the player, e.g. in role alert
 		abbr = "vamp", -- abbreviation
 		team = TEAM_TRAITOR, -- the team name: roles with same team name are working together
 		visibleForTraitors = true, -- other traitors can see this role / sync them with traitors
