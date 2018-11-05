@@ -66,6 +66,10 @@ function PIGEON.Disable(player)
 		return
 	end
 
+	player:SetRunSpeed(220)
+	player:SetWalkSpeed(220)
+	player:SetMaxSpeed(220)
+
 	player:DrawViewModel(true)
 	player:DrawWorldModel(true)
 
@@ -135,9 +139,7 @@ end
 
 -- CLIENT HOOKS
 function PIGEON.Hooks.CalcView(player, pos, ang, fov)
-	if not player.pigeon then
-		return
-	end
+	if not player.pigeon then return end
 
 	ang = player:GetAimVector():Angle()
 
@@ -212,9 +214,7 @@ function PIGEON.Hooks.SetModel(player)
 end
 
 function PIGEON.Hooks.UpdateAnimation(player)
-	if not player.pigeon then
-		return
-	end
+	if not player.pigeon then return end
 
 	local rate = 2
 	local sequence = "idle01"
