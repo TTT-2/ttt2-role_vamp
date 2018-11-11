@@ -186,8 +186,8 @@ if SERVER then
 	end)
 
 	-- is called if the role has been selected in the normal way of team setup
-	hook.Add("TTT2RoleTypeSet", "UpdateVampRoleSelect", function(ply)
-		if ply:GetSubRole() == ROLE_VAMPIRE then
+	hook.Add("TTT2UpdateSubrole", "UpdateVampRoleSelect", function(ply, old, new)
+		if new == ROLE_VAMPIRE then
 			ply:SetNWBool("InBloodlust", false)
 			ply:SetNWInt("Bloodlust", CurTime() + GetConVar("ttt2_vamp_bloodtime"):GetInt())
 		end
@@ -196,7 +196,8 @@ if SERVER then
 	-- if player is transformed and dies
 	hook.Add("EntityTakeDamage", "VampKillsAnotherPly", function(target, dmginfo)
 		if IsValid(target) and target:IsPlayer() and target:IsActive() and target:Health() - dmginfo:GetDamage() <= 0
-		and target:GetSubRole() == ROLE_VAMPIRE and target:GetNWBool("transformedVamp", false) then
+		and target:GetSubRole() == ROLE_VAMPIRE and target:GetNWBool("transformedVamp", false)
+		then
 			TransformToVamp(target)
 		end
 	end)
