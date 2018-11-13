@@ -7,12 +7,12 @@ if SERVER then
 	resource.AddFile("materials/vgui/ttt/sprite_vamp.vmt")
 
 	util.AddNetworkString("TTT2VampPigeon")
+
+	CreateConVar("ttt2_vamp_bloodtime", "60", {FCVAR_ARCHIVE, FCVAR_NOTIFY})
 else
 	CreateClientConVar("ttt2_vamp_hud_x", "0.8", true, false, "The relative x-coordinate (position) of the HUD. (0-100) Def: 0.8")
 	CreateClientConVar("ttt2_vamp_hud_y", "83.3", true, false, "The relative y-coordinate (position) of the HUD. (0-100) Def: 83.3")
 end
-
-CreateConVar("ttt2_vamp_bloodtime", "60", {FCVAR_ARCHIVE, FCVAR_NOTIFY, FCVAR_REPLICATED})
 
 -- important to add roles with this function,
 -- because it does more than just access the array ! e.g. updating other arrays
@@ -39,14 +39,14 @@ hook.Add("TTT2BaseRoleInit", "TTT2ConBRTWithVamp", function()
 	SetBaseRole(VAMPIRE, ROLE_TRAITOR)
 end)
 
+hook.Add("TTTUlxDynamicRCVars", "TTTUlxDynamicVampCVars", function(tbl)
+	tbl[ROLE_VAMPIRE] = tbl[ROLE_VAMPIRE] or {}
+
+	table.insert(tbl[ROLE_VAMPIRE], {cvar = "ttt2_vamp_bloodtime", slider = true, desc = "vampire bloodlust time"})
+end)
+
 -- if sync of roles has finished
 hook.Add("TTT2FinishedLoading", "VampInitT", function()
-	hook.Add("TTTUlxDynamicRCVars", "TTTUlxDynamicVampCVars", function(tbl)
-		tbl[ROLE_VAMPIRE] = tbl[ROLE_VAMPIRE] or {}
-
-		table.insert(tbl[ROLE_VAMPIRE], {cvar = "ttt2_vamp_bloodtime", slider = true, desc = "vampire bloodlust time"})
-	end)
-
 	if CLIENT then
 		-- setup here is not necessary but if you want to access the role data, you need to start here
 		-- setup basic translation !
@@ -239,9 +239,15 @@ else
 
 	surface.CreateFont("BLOODLUST", {font = "Trebuchet24", size = 24, weight = 750})
 
+	local cv = GetConVar("rep_ttt2_vamp_bloodtime")
+
 	hook.Add("HUDPaint", "VampHudBloodlust", function()
 		local ply = LocalPlayer()
 		local rstate = GetRoundState()
+
+		cv = cv or GetConVar("rep_ttt2_vamp_bloodtime")
+
+		if not cv then return end
 
 		if rstate == ROUND_ACTIVE and IsValid(ply) and ply:IsActive() and ply:GetSubRole() == ROLE_VAMPIRE then
 			local xPos = CreateClientConVar("ttt2_vamp_hud_x", "0.8", true, false, "The relative x-coordinate (position) of the HUD. (0-100) Def: 0.8")
@@ -257,7 +263,7 @@ else
 
 			if not ply:GetNWBool("InBloodlust", false) then
 				local bloodlustTime = ply:GetNWInt("Bloodlust", 0)
-				local delay = GetConVar("ttt2_vamp_bloodtime"):GetInt()
+				local delay = cv:GetInt()
 
 				multiplier = bloodlustTime - CurTime()
 				multiplier = multiplier / delay

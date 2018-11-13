@@ -185,6 +185,7 @@ function PIGEON.Hooks.KeyPress(player, key)
 		--	player:SetVelocity(player:GetForward() * 300 + Vector(0, 0, 100))
 		--elseif key == IN_JUMP and player:IsOnGround() then
 		player:SetMoveType(2)
+		player:SetVelocity(player:GetForward() * 300 + player:GetAimVector())
 	elseif key == IN_JUMP and not player:IsOnGround() then
 		player:SetVelocity(player:GetForward() * 300 + player:GetAimVector())
 	elseif player:IsOnGround() then
