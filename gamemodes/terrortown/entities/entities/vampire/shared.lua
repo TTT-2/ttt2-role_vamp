@@ -212,6 +212,21 @@ if SERVER then
 			TransformToVamp(victim)
 		end
 	end)
+
+	hook.Add("ScalePlayerDamage", "VampScaleDmg", function(ply, hitgroup, dmginfo)
+		local attacker = dmginfo:GetAttacker()
+
+		if ply:IsPlayer() and IsValid(attacker) and attacker:IsPlayer()
+		and attacker:GetSubRole() == ROLE_VAMPIRE
+		and attacker:GetNWBool("InBloodlust", false)
+		then
+			dmginfo:ScaleDamage(1.125)
+
+			local heal = (attacker:Health() + dmginfo:GetDamage() * 0.5)
+
+			attacker:SetHealth(math.ceil(heal))
+		end
+	end)
 else
 	net.Receive("TTT2VampPigeon", function()
 		local ply = LocalPlayer()
@@ -221,19 +236,6 @@ else
 			PIGEON.Enable(ply)
 		else
 			PIGEON.Disable(ply)
-		end
-	end)
-
-	hook.Add("ScalePlayerDamage", "VampScaleDmg", function(ply, hitgroup, dmginfo)
-		if ply:IsPlayer() and IsValid(dmginfo:GetAttacker()) and dmginfo:GetAttacker():IsPlayer()
-		and dmginfo:GetAttacker():GetSubRole() == ROLE_VAMPIRE
-		and dmginfo:GetAttacker():GetNWBool("InBloodlust", false)
-		then
-			dmginfo:ScaleDamage(1.125)
-
-			local heal = (dmginfo:GetAttacker():Health() + dmginfo:GetDamage() * 0.5)
-
-			dmginfo:GetAttacker():SetHealth(math.ceil(heal))
 		end
 	end)
 
