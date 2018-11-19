@@ -30,7 +30,8 @@ InitCustomRole("VAMPIRE", { -- first param is access for ROLES array => ROLES["V
 		pct = 0.1, -- necessary: percentage of getting this role selected (per player)
 		maximum = 1, -- maximum amount of roles in a round
 		minPlayers = 10, -- minimum amount of players until this role is able to get selected
-		togglable = true -- option to toggle a role for a client if possible (F1 menu)
+		togglable = true, -- option to toggle a role for a client if possible (F1 menu)
+		credits = 2
 })
 
 -- now link this subrole with its baserole
