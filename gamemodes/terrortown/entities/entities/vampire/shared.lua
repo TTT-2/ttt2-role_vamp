@@ -252,6 +252,8 @@ else
 		if not cv then return end
 
 		if rstate == ROUND_ACTIVE and IsValid(ply) and ply:IsActive() and ply:GetSubRole() == ROLE_VAMPIRE then
+			if not hook.Run("HUDShouldDraw", "TTT2VampBloodlustHUD") then return end
+
 			local xPos = CreateClientConVar("ttt2_vamp_hud_x", "0.8", true, false, "The relative x-coordinate (position) of the HUD. (0-100) Def: 0.8")
 			local yPos = CreateClientConVar("ttt2_vamp_hud_y", "83.3", true, false, "The relative y-coordinate (position) of the HUD. (0-100) Def: 83.3")
 
