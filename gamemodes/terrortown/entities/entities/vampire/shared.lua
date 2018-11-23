@@ -261,7 +261,7 @@ else
 			draw.RoundedBox(8, x - 5, y - 10, 250, 60, Color(0, 0, 0, 200))
 
 			local multiplier = 1
-			local color = VAMPIRE.bgcolor
+			local color = VAMPIRE.dkcolor
 
 			if not ply:GetNWBool("InBloodlust", false) then
 				local bloodlustTime = ply:GetNWInt("Bloodlust", 0)

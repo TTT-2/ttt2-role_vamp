@@ -14,7 +14,7 @@ end
 
 PIGEON = {}
 
-PIGEON.model = Model("models/pigeon.mdl")
+PIGEON.model = util.IsValidModel("models/tsbb/animals/bat.mdl") and Model("models/tsbb/animals/bat.mdl") or Model("models/pigeon.mdl")
 PIGEON.sounds = {}
 PIGEON.sounds.idle = Sound("bird_sounds/pigeon_idle2.wav", 100, 100)
 PIGEON.sounds.pain = Sound("bird_sounds/pigeon_idle4.wav", 100, 100)
