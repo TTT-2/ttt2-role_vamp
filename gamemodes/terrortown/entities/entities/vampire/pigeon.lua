@@ -215,7 +215,7 @@ function PIGEON.Hooks.SetModel(player)
 end
 
 function PIGEON.Hooks.UpdateAnimation(player)
-	if not player.pigeon or PIGEON.model ~= "models/pigeon.mdl" then return end
+	if not player.pigeon then return end
 
 	local rate = 2
 	local sequence = "idle01"
@@ -255,6 +255,8 @@ function PIGEON.Hooks.UpdateAnimation(player)
 			sequence = "Idle01"
 		end
 	end
+
+	if PIGEON.model ~= "models/pigeon.mdl" then return end
 
 	local sequenceIndex = player:LookupSequence(sequence)
 
