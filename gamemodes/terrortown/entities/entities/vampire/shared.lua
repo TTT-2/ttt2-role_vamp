@@ -249,7 +249,7 @@ else
 
 		cv = cv or GetConVar("rep_ttt2_vamp_bloodtime")
 
-		if not cv then return end
+		if not cv or not VAMPIRE then return end
 
 		if rstate == ROUND_ACTIVE and IsValid(ply) and ply:IsActive() and ply:GetSubRole() == ROLE_VAMPIRE then
 			if not hook.Run("HUDShouldDraw", "TTT2VampBloodlustHUD") then return end
@@ -272,7 +272,7 @@ else
 				multiplier = bloodlustTime - CurTime()
 				multiplier = multiplier / delay
 
-				local secondColor = INNOCENT.color
+				local secondColor = VAMPIRE.bgcolor
 				local r = color.r - (color.r - secondColor.r) * multiplier
 				local g = color.g - (color.g - secondColor.g) * multiplier
 				local b = color.b - (color.b - secondColor.b) * multiplier
