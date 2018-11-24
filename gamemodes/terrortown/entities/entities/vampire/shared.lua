@@ -254,6 +254,10 @@ else
 		if rstate == ROUND_ACTIVE and IsValid(ply) and ply:IsActive() and ply:GetSubRole() == ROLE_VAMPIRE then
 			if not hook.Run("HUDShouldDraw", "TTT2VampBloodlustHUD") then return end
 
+			local color = VAMPIRE.dkcolor
+
+			if not color then return end
+
 			local xPos = CreateClientConVar("ttt2_vamp_hud_x", "0.8", true, false, "The relative x-coordinate (position) of the HUD. (0-100) Def: 0.8")
 			local yPos = CreateClientConVar("ttt2_vamp_hud_y", "83.3", true, false, "The relative y-coordinate (position) of the HUD. (0-100) Def: 83.3")
 
@@ -263,7 +267,6 @@ else
 			draw.RoundedBox(8, x - 5, y - 10, 250, 60, Color(0, 0, 0, 200))
 
 			local multiplier = 1
-			local color = VAMPIRE.dkcolor
 
 			if not ply:GetNWBool("InBloodlust", false) then
 				local bloodlustTime = ply:GetNWInt("Bloodlust", 0)
