@@ -3,8 +3,7 @@ include("pigeon.lua")
 if SERVER then
 	AddCSLuaFile()
 
-	resource.AddFile("materials/vgui/ttt/icon_vamp.vmt")
-	resource.AddFile("materials/vgui/ttt/sprite_vamp.vmt")
+	resource.AddFile("materials/vgui/ttt/dynamic/roles/icon_vamp.vmt")
 
 	util.AddNetworkString("TTT2VampPigeon")
 
@@ -17,9 +16,9 @@ end
 -- important to add roles with this function,
 -- because it does more than just access the array ! e.g. updating other arrays
 InitCustomRole("VAMPIRE", { -- first param is access for ROLES array => ROLES["VAMPIRE"] or ROLES["VAMPIRE"]
-		color = Color(104, 29, 24, 255), -- ...
-		dkcolor = Color(37, 3, 0, 255), -- ...
-		bgcolor = Color(18, 80, 29, 255), -- ...
+		color = Color(149, 43, 37, 255), -- ...
+		dkcolor = Color(67, 3, 0, 255), -- ...
+		bgcolor = Color(29, 116, 40, 255), -- ...
 		abbr = "vamp", -- abbreviation
 		defaultTeam = TEAM_TRAITOR, -- the team name: roles with same team name are working together
 		defaultEquipment = SPECIAL_EQUIPMENT, -- here you can set up your own default equipment
