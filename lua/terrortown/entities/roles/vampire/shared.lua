@@ -1,7 +1,6 @@
-include("pigeon.lua")
-
 if SERVER then
 	AddCSLuaFile()
+	AddCSLuaFile("pigeon.lua")
 
 	resource.AddFile("materials/vgui/ttt/dynamic/roles/icon_vamp.vmt")
 
@@ -12,6 +11,8 @@ else
 	CreateClientConVar("ttt2_vamp_hud_x", "0.8", true, false, "The relative x-coordinate (position) of the HUD. (0-100) Def: 0.8")
 	CreateClientConVar("ttt2_vamp_hud_y", "83.3", true, false, "The relative y-coordinate (position) of the HUD. (0-100) Def: 83.3")
 end
+
+include("pigeon.lua")
 
 ROLE.color = Color(149, 43, 37, 255) -- ...
 ROLE.dkcolor = Color(67, 3, 0, 255) -- ...
