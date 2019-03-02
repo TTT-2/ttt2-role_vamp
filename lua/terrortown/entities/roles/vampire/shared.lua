@@ -13,29 +13,30 @@ else
 	CreateClientConVar("ttt2_vamp_hud_y", "83.3", true, false, "The relative y-coordinate (position) of the HUD. (0-100) Def: 83.3")
 end
 
--- important to add roles with this function,
--- because it does more than just access the array ! e.g. updating other arrays
-InitCustomRole("VAMPIRE", { -- first param is access for ROLES array => ROLES["VAMPIRE"] or ROLES["VAMPIRE"]
-		color = Color(149, 43, 37, 255), -- ...
-		dkcolor = Color(67, 3, 0, 255), -- ...
-		bgcolor = Color(29, 116, 40, 255), -- ...
-		abbr = "vamp", -- abbreviation
-		defaultTeam = TEAM_TRAITOR, -- the team name: roles with same team name are working together
-		defaultEquipment = SPECIAL_EQUIPMENT, -- here you can set up your own default equipment
-		surviveBonus = 0.5, -- bonus multiplier for every survive while another player was killed
-		scoreKillsMultiplier = 5, -- multiplier for kill of player of another team
-		scoreTeamKillsMultiplier = -16 -- multiplier for teamkill
-	}, {
-		pct = 0.1, -- necessary: percentage of getting this role selected (per player)
-		maximum = 1, -- maximum amount of roles in a round
-		minPlayers = 10, -- minimum amount of players until this role is able to get selected
-		togglable = true, -- option to toggle a role for a client if possible (F1 menu)
-		credits = 2
-})
+ROLE.color = Color(149, 43, 37, 255) -- ...
+ROLE.dkcolor = Color(67, 3, 0, 255) -- ...
+ROLE.bgcolor = Color(29, 116, 40, 255) -- ...
+ROLE.abbr = "vamp" -- abbreviation
+ROLE.defaultEquipment = SPECIAL_EQUIPMENT -- here you can set up your own default equipment
+ROLE.surviveBonus = 0.5 -- bonus multiplier for every survive while another player was killed
+ROLE.scoreKillsMultiplier = 5 -- multiplier for kill of player of another team
+ROLE.scoreTeamKillsMultiplier = -16 -- multiplier for teamkill
+
+ROLE.conVarData = {
+	pct = 0.1, -- necessary: percentage of getting this role selected (per player)
+	maximum = 1, -- maximum amount of roles in a round
+	minPlayers = 10, -- minimum amount of players until this role is able to get selected
+	togglable = true, -- option to toggle a role for a client if possible (F1 menu)
+	credits = 2
+}
 
 -- now link this subrole with its baserole
 hook.Add("TTT2BaseRoleInit", "TTT2ConBRTWithVamp", function()
-	SetBaseRole(VAMPIRE, ROLE_TRAITOR)
+	VAMPIRE:SetBaseRole(ROLE_TRAITOR)
+end)
+
+hook.Add("TTT2RolesLoaded", "AddVampTeam", function()
+	VAMPIRE.defaultTeam = TEAM_TRAITOR
 end)
 
 hook.Add("TTTUlxDynamicRCVars", "TTTUlxDynamicVampCVars", function(tbl)
