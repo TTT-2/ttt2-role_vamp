@@ -122,7 +122,6 @@ hook.Add("TTT2ToggleRole", "TogglePigeonHooks", function(roleData, toggled)
 				hook.Add("SetPlayerAnimation", "PIGEON.SetPlayerAnimation", PIGEON.Hooks.SetAnimation)
 				hook.Add("UpdateAnimation", "PIGEON.UpdateAnimation", PIGEON.Hooks.UpdateAnimation)
 				hook.Add("PlayerCanPickupWeapon", "PIGEON.PickupWeapon", PIGEON.Hooks.PickupWeapon)
-				hook.Add("OnPlayerHitGround", "PIGEON.HitGround", PIGEON.Hooks.HitGround)
 			end
 		else
 			if CLIENT then
@@ -134,7 +133,6 @@ hook.Add("TTT2ToggleRole", "TogglePigeonHooks", function(roleData, toggled)
 				hook.Remove("SetPlayerAnimation", "PIGEON.SetPlayerAnimation")
 				hook.Remove("UpdateAnimation", "PIGEON.UpdateAnimation")
 				hook.Remove("PlayerCanPickupWeapon", "PIGEON.PickupWeapon")
-				hook.Remove("OnPlayerHitGround", "PIGEON.HitGround")
 			end
 		end
 	end
@@ -183,22 +181,12 @@ else -- SERVER
 		if not ply.pigeon then return end
 
 		if key == IN_JUMP and ply:OnGround() then
-			ply:SetMoveType(MOVETYPE_FLYGRAVITY)
-			ply:SetVelocity(ply:GetForward() * 300 + ply:GetAimVector() + Vector(0, 0, 100))
+			ply:SetMoveType(MOVETYPE_NOCLIP)
+			ply:SetVelocity(ply:GetAimVector() * 100)
 		elseif key == IN_JUMP and not ply:OnGround() then
-			ply:SetVelocity(ply:GetForward() * 300 + ply:GetAimVector() + Vector(0, 0, 100))
+			ply:SetVelocity(ply:GetAimVector() + Vector(0, 0, 50))
 		elseif not ply:OnGround() and key == IN_WALK then
 			ply:SetMaxSpeed(250)
-		end
-
-		if ply:OnGround() and key == IN_SPEED then
-			ply:SetVelocity(ply:GetForward() * 1500)
-		end
-	end
-
-	function PIGEON.Hooks.HitGround(ply)
-		if ply.pigeon then
-			ply:SetMoveType(MOVETYPE_WALK)
 		end
 	end
 
@@ -227,19 +215,15 @@ else -- SERVER
 			if speed > 0 then
 				sequence = "Walk"
 
-				ply:SetMaxSpeed(200)
-
 				if speed > 200 then
 					sequence = "Run"
 					rate = 1
 				end
 			end
 		elseif not ply:OnGround() then
-			ply:SetMoveType(MOVETYPE_FLYGRAVITY)
+			ply:SetMoveType(MOVETYPE_FLY)
 
 			rate = 1
-
-			ply:SetMaxSpeed(100)
 
 			if speed > 0 then
 				sequence = "Soar"
@@ -264,15 +248,19 @@ else -- SERVER
 			ply:ResetSequence(sequenceIndex)
 		end
 
-		sequenceIndex = ply.pigeon.ghost:LookupSequence(sequence)
+		local ghost = ply.pigeon.ghost
 
-		if ply.pigeon.ghost:GetSequence() ~= sequenceIndex then
-			ply.pigeon.ghost:Fire("setanimation", sequence, 0)
+		if IsValid(ghost) then
+			sequenceIndex = ghost:LookupSequence(sequence)
+
+			if ply.pigeon.ghost:GetSequence() ~= sequenceIndex then
+				ply.pigeon.ghost:Fire("setanimation", sequence, 0)
+			end
+
+			ply.pigeon.ghost:SetPlaybackRate(rate)
 		end
 
 		ply:SetPlaybackRate(rate)
-
-		ply.pigeon.ghost:SetPlaybackRate(rate)
 	end
 
 	function PIGEON.Hooks.PickupWeapon(ply, wep)

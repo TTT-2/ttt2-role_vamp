@@ -6,7 +6,7 @@ HUDELEMENT.Base = base
 
 if CLIENT then -- CLIENT
 	local iconSize_default = 64
-	local pad_default = 14
+	local pad_default = 7
 	local w_default, h_default = 365, 32
 
 	local w, h = w_default, h_default
@@ -77,10 +77,10 @@ if CLIENT then -- CLIENT
 
 		local multiplier
 
-		local color = VAMPIRE.dkcolor
+		local color = VAMPIRE.color
 		if not color then return end
 
-		if IsValid(ply) and ply:IsActive() and ply:Alive() and ply:GetSubRole() == ROLE_VAMPIRE then
+		if ply:IsActive() and ply:Alive() and ply:GetSubRole() == ROLE_VAMPIRE then
 			if not ply:GetNWBool("InBloodlust", false) then
 				local bloodlustTime = ply:GetNWInt("Bloodlust", 0)
 				local delay = GetGlobalInt("ttt2_vamp_bloodtime")
@@ -94,6 +94,8 @@ if CLIENT then -- CLIENT
 				local b = color.b - (color.b - secondColor.b) * multiplier
 
 				color = Color(r, g, b, 255)
+			else
+				multiplier = 0
 			end
 		end
 

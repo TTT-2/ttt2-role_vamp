@@ -112,10 +112,12 @@ if SERVER then
 
 			ply:SetNWBool("transformedVamp", false)
 
-			for _, wep in pairs(savedWeapons[ply:SteamID64()]) do
-				local w = ply:Give(wep.cls)
-				w:SetClip1(wep.clip1)
-				w:SetClip2(wep.clip2)
+			if savedWeapons[ply:SteamID64()] then
+				for _, wep in pairs(savedWeapons[ply:SteamID64()]) do
+					local w = ply:Give(wep.cls)
+					w:SetClip1(wep.clip1)
+					w:SetClip2(wep.clip2)
+				end
 			end
 
 			savedWeapons[ply:SteamID64()] = {}
