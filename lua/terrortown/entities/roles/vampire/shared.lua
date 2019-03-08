@@ -172,8 +172,10 @@ hook.Add("Think", "ThinkVampire", function()
 end)
 
 if SERVER then
-	hook.Add("KeyRelease", "KeyReleaseVamp", function(ply, key)
-		if key == IN_WALK and GetRoundState() == ROUND_ACTIVE and ply:IsActive() and ply:GetSubRole() == ROLE_VAMPIRE then
+	util.AddNetworkString("TTT2RequestVampTransformation")
+
+	net.Receive("TTT2RequestVampTransformation", function(len, ply)
+		if IsValid(ply) and ply:IsActive() and ply:Alive() and ply:GetSubRole() == ROLE_VAMPIRE then
 			if not ply:GetNWBool("InBloodlust", false) and ply:GetNWInt("Bloodlust", 0) >= CurTime() then
 				ply:SetNWInt("Bloodlust", 0)
 				ply:SetNWBool("InBloodlust", true)
@@ -228,7 +230,7 @@ if SERVER then
 			attacker:SetHealth(math.ceil(heal))
 		end
 	end)
-else
+else -- CLIENT
 	net.Receive("TTT2VampPigeon", function()
 		local ply = LocalPlayer()
 
@@ -308,30 +310,9 @@ else
 		end
 	end)
 
-	hook.Add("TTTSettingsTabs", "ttt2VampSettings", function(dtabs)
-		local settings_panel = vgui.Create("DPanelList", dtabs)
-		settings_panel:StretchToParent(0, 0, dtabs:GetPadding() * 2, 0)
-		settings_panel:EnableVerticalScrollbar(true)
-		settings_panel:SetPadding(10)
-		settings_panel:SetSpacing(10)
-		dtabs:AddSheet("Bloodlust", settings_panel, "icon16/user_red.png", false, false, "The bloodlust settings")
-
-		local list = vgui.Create("DIconLayout", settings_panel)
-		list:SetSpaceX(5)
-		list:SetSpaceY(5)
-		list:Dock(FILL)
-		list:DockMargin(5, 5, 5, 5)
-		list:DockPadding(10, 10, 10, 10)
-
-		local settings_tab = vgui.Create("DForm")
-		settings_tab:SetSpacing(10)
-		settings_tab:SetName("HUD Position")
-		settings_tab:SetWide(settings_panel:GetWide() - 30)
-		settings_panel:AddItem(settings_tab)
-
-		settings_tab:NumSlider("x-coordinate (position)", "ttt2_vamp_hud_x", 0, ScrW(), 2)
-		settings_tab:NumSlider("y-coordinate (position)", "ttt2_vamp_hud_y", 0, ScrH(), 2)
-
-		settings_tab:SizeToContents()
-	end)
+	local function ToggleTransformation()
+		net.Start("TTT2RequestVampTransformation")
+		net.SendToServer()
+	end
+	bind.Register("vamptranstoggle", ToggleTransformation, nil, "Vampire", "Toggle Transformation")
 end
