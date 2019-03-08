@@ -110,31 +110,35 @@ end
 -- =============================================================================
 -- HOOKS
 
-function PIGEON.HooksEnable()
-	if CLIENT then
-		hook.Add("CalcView", "PIGEON.CalcView", PIGEON.Hooks.CalcView)
-	else
-		hook.Add("KeyPress", "PIGEON.KeyPress", PIGEON.Hooks.KeyPress)
-		hook.Add("PlayerHurt", "PIGEON.PlayerHurt", PIGEON.Hooks.Hurt)
-		hook.Add("PlayerSetModel", "PIGEON.PlayerSetModel", PIGEON.Hooks.SetModel)
-		hook.Add("SetPlayerAnimation", "PIGEON.SetPlayerAnimation", PIGEON.Hooks.SetAnimation)
-		hook.Add("UpdateAnimation", "PIGEON.UpdateAnimation", PIGEON.Hooks.UpdateAnimation)
-		hook.Add("PlayerCanPickupWeapon", "PIGEON.PickupWeapon", PIGEON.Hooks.PickupWeapon)
+hook.Add("TTT2ToggleRole", "TogglePigeonHooks", function(roleData, toggled)
+	if roleData == VAMPIRE then
+		if toggled then
+			if CLIENT then
+				hook.Add("CalcView", "PIGEON.CalcView", PIGEON.Hooks.CalcView)
+			else
+				hook.Add("KeyPress", "PIGEON.KeyPress", PIGEON.Hooks.KeyPress)
+				hook.Add("PlayerHurt", "PIGEON.PlayerHurt", PIGEON.Hooks.Hurt)
+				hook.Add("PlayerSetModel", "PIGEON.PlayerSetModel", PIGEON.Hooks.SetModel)
+				hook.Add("SetPlayerAnimation", "PIGEON.SetPlayerAnimation", PIGEON.Hooks.SetAnimation)
+				hook.Add("UpdateAnimation", "PIGEON.UpdateAnimation", PIGEON.Hooks.UpdateAnimation)
+				hook.Add("PlayerCanPickupWeapon", "PIGEON.PickupWeapon", PIGEON.Hooks.PickupWeapon)
+				hook.Add("OnPlayerHitGround", "PIGEON.HitGround", PIGEON.Hooks.HitGround)
+			end
+		else
+			if CLIENT then
+				hook.Remove("CalcView", "PIGEON.CalcView")
+			else
+				hook.Remove("KeyPress", "PIGEON.KeyPress")
+				hook.Remove("PlayerHurt", "PIGEON.PlayerHurt")
+				hook.Remove("PlayerSetModel", "PIGEON.PlayerSetModel")
+				hook.Remove("SetPlayerAnimation", "PIGEON.SetPlayerAnimation")
+				hook.Remove("UpdateAnimation", "PIGEON.UpdateAnimation")
+				hook.Remove("PlayerCanPickupWeapon", "PIGEON.PickupWeapon")
+				hook.Remove("OnPlayerHitGround", "PIGEON.HitGround")
+			end
+		end
 	end
-end
-
-function PIGEON.HooksDisable()
-	if CLIENT then
-		hook.Remove("CalcView", "PIGEON.CalcView")
-	else
-		hook.Remove("KeyPress", "PIGEON.KeyPress")
-		hook.Remove("PlayerHurt", "PIGEON.PlayerHurt")
-		hook.Remove("PlayerSetModel", "PIGEON.PlayerSetModel")
-		hook.Remove("SetPlayerAnimation", "PIGEON.SetPlayerAnimation")
-		hook.Remove("UpdateAnimation", "PIGEON.UpdateAnimation")
-		hook.Remove("PlayerCanPickupWeapon", "PIGEON.PickupWeapon")
-	end
-end
+end)
 
 if CLIENT then
 	function PIGEON.Hooks.CalcView(ply, pos, ang, fov)
@@ -143,7 +147,7 @@ if CLIENT then
 		ang = ply:GetAimVector():Angle()
 
 		local ghost = ply:GetNWEntity("pigeon.ghost")
-		if ghost and ghost:IsValid() then
+		if IsValid(ghost) then
 			if GetViewEntity() == ply then
 				ghost:SetColor(Color(255, 255, 255, 255))
 			else
@@ -178,25 +182,23 @@ else -- SERVER
 	function PIGEON.Hooks.KeyPress(ply, key)
 		if not ply.pigeon then return end
 
-		if key == IN_JUMP and ply:IsOnGround() then
-			--	ply:SetMoveType(4)
-			--	ply:SetVelocity(ply:GetForward() * 300 + Vector(0, 0, 100))
-			--elseif key == IN_JUMP and ply:IsOnGround() then
-			ply:SetMoveType(2)
-			ply:SetVelocity(ply:GetForward() * 300 + ply:GetAimVector())
-		elseif key == IN_JUMP and not ply:IsOnGround() then
-			ply:SetVelocity(ply:GetForward() * 300 + ply:GetAimVector())
-		elseif ply:IsOnGround() then
-			ply:SetMoveType(2)
-		elseif not ply:IsOnGround() and key == IN_WALK then
+		if key == IN_JUMP and ply:OnGround() then
+			ply:SetMoveType(MOVETYPE_FLYGRAVITY)
+			ply:SetVelocity(ply:GetForward() * 300 + ply:GetAimVector() + Vector(0, 0, 100))
+		elseif key == IN_JUMP and not ply:OnGround() then
+			ply:SetVelocity(ply:GetForward() * 300 + ply:GetAimVector() + Vector(0, 0, 100))
+		elseif not ply:OnGround() and key == IN_WALK then
 			ply:SetMaxSpeed(250)
-		else
-			ply:SetMoveType(0)
 		end
 
 		if ply:OnGround() and key == IN_SPEED then
-			ply:SetVelocity(ply:GetForward() * 1500 + Vector(0, 0, 100))
-			ply:SetMoveType(2)
+			ply:SetVelocity(ply:GetForward() * 1500)
+		end
+	end
+
+	function PIGEON.Hooks.HitGround(ply)
+		if ply.pigeon then
+			ply:SetMoveType(MOVETYPE_WALK)
 		end
 	end
 
@@ -219,8 +221,8 @@ else -- SERVER
 		local sequence = "idle01"
 		local speed = ply:GetVelocity():Length()
 
-		if ply:IsOnGround() then
-			ply:SetMoveType(2)
+		if ply:OnGround() then
+			ply:SetMoveType(MOVETYPE_WALK)
 
 			if speed > 0 then
 				sequence = "Walk"
@@ -232,8 +234,8 @@ else -- SERVER
 					rate = 1
 				end
 			end
-		elseif not ply:IsOnGround() then
-			ply:SetMoveType(4)
+		elseif not ply:OnGround() then
+			ply:SetMoveType(MOVETYPE_FLYGRAVITY)
 
 			rate = 1
 

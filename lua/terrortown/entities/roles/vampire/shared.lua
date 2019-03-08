@@ -5,6 +5,7 @@ if SERVER then
 	resource.AddFile("materials/vgui/ttt/dynamic/roles/icon_vamp.vmt")
 
 	util.AddNetworkString("TTT2VampPigeon")
+	util.AddNetworkString("TTT2RequestVampTransformation")
 
 	CreateConVar("ttt2_vamp_bloodtime", "60", {FCVAR_ARCHIVE, FCVAR_NOTIFY})
 else
@@ -78,16 +79,15 @@ Allerdings heilt er sich im Blutdurst auch um 50% des Schadens, den er anderen S
 	end
 end)
 
-local savedWeapons = savedWeapons or {}
+if SERVER then
+	local savedWeapons = savedWeapons or {}
 
-function TransformToVamp(ply)
-	if SERVER then
+	function TransformToVamp(ply)
 		if not ply:GetNWBool("transformedVamp", false) then -- transform
 			savedWeapons[ply:SteamID64()] = {}
 
 			for _, wep in pairs(ply:GetWeapons()) do
-				-- todo save clip too !
-				table.insert(savedWeapons[ply:SteamID64()], {cls = wep:GetClass(), clip1 = wep:Clip1(), clip2 = wep:Clip2()})
+				savedWeapons[ply:SteamID64()][#savedWeapons[ply:SteamID64()] + 1] = {cls = wep:GetClass(), clip1 = wep:Clip1(), clip2 = wep:Clip2()}
 			end
 
 			ply:StripWeapons()
@@ -121,44 +121,16 @@ function TransformToVamp(ply)
 			savedWeapons[ply:SteamID64()] = {}
 		end
 	end
-end
 
-local hooksInstalled = false
-
-hook.Add("Think", "ThinkVampire", function()
-	local rs = GetRoundState()
-
-	if not hooksInstalled and rs == ROUND_ACTIVE then
-		hooksInstalled = true
-
-		PIGEON.HooksEnable()
-	end
-
-	if hooksInstalled and rs == ROUND_POST then
-		hooksInstalled = false
-
-		if SERVER then
-			for _, v in ipairs(player.GetAll()) do
-				if v:GetSubRole() == ROLE_VAMPIRE and v:GetNWBool("transformedVamp", false) then
-					TransformToVamp(v)
-				end
+	hook.Add("Think", "ThinkVampire", function()
+		for _, ply in ipairs(player.GetAll()) do
+			if ply:IsActive() and ply:GetSubRole() == ROLE_VAMPIRE and ply:GetNWInt("Bloodlust", 0) < CurTime() then
+				ply:SetNWBool("InBloodlust", true)
+				ply:TakeDamage(1, game.GetWorld())
+				ply:SetNWInt("Bloodlust", CurTime() + 2)
 			end
 		end
-
-		PIGEON.HooksDisable()
-	end
-
-	for _, ply in ipairs(player.GetAll()) do
-		if ply:IsActive() and ply:GetSubRole() == ROLE_VAMPIRE and ply:GetNWInt("Bloodlust", 0) < CurTime() then
-			ply:SetNWBool("InBloodlust", true)
-			ply:TakeDamage(1, game.GetWorld())
-			ply:SetNWInt("Bloodlust", CurTime() + 2)
-		end
-	end
-end)
-
-if SERVER then
-	util.AddNetworkString("TTT2RequestVampTransformation")
+	end)
 
 	net.Receive("TTT2RequestVampTransformation", function(len, ply)
 		if IsValid(ply) and ply:IsActive() and ply:Alive() and ply:GetSubRole() == ROLE_VAMPIRE then
@@ -174,16 +146,39 @@ if SERVER then
 		end
 	end)
 
+	hook.Add("TTTPrepareRound", "ResetVampirePigeon", function()
+		for _, ply in ipairs(player.GetAll()) do
+			if ply:GetNWBool("transformedVamp", false) then
+				TransformToVamp(ply)
+			end
+		end
+	end)
+
+	hook.Add("TTT2SyncGlobals", "AddVampireGlobals", function()
+		SetGlobalInt("ttt2_vamp_bloodtime", GetConVar("ttt2_vamp_bloodtime"):GetInt())
+	end)
+
+	cvars.AddChangeCallback("ttt2_vamp_bloodtime", function(name, old, new)
+		SetGlobalInt(name, tonumber(new))
+	end, "TTT2VampBloodlust")
+
 	-- is called if the role has been selected in the normal way of team setup
 	hook.Add("TTT2UpdateSubrole", "UpdateVampRoleSelect", function(ply, old, new)
 		if new == ROLE_VAMPIRE then
 			ply:SetNWBool("InBloodlust", false)
 			ply:SetNWInt("Bloodlust", CurTime() + GetConVar("ttt2_vamp_bloodtime"):GetInt())
+		elseif old == ROLE_VAMPIRE then
+			if ply:GetNWBool("transformedVamp", false) then
+				TransformToVamp(ply)
+			end
+
+			ply:SetNWBool("InBloodlust", nil)
+			ply:SetNWInt("Bloodlust", nil)
 		end
 	end)
 
 	-- if player is transformed and dies
-	hook.Add("EntityTakeDamage", "VampKillsAnotherPly", function(target, dmginfo)
+	hook.Add("EntityTakeDamage", "VampDeathDmg", function(target, dmginfo)
 		if IsValid(target) and target:IsPlayer() and target:IsActive() and target:Health() - dmginfo:GetDamage() <= 0
 		and target:GetSubRole() == ROLE_VAMPIRE and target:GetNWBool("transformedVamp", false)
 		then
@@ -221,8 +216,7 @@ else -- CLIENT
 	net.Receive("TTT2VampPigeon", function()
 		local ply = LocalPlayer()
 
-		local b = net.ReadBool()
-		if b then
+		if net.ReadBool() then
 			PIGEON.Enable(ply)
 		else
 			PIGEON.Disable(ply)
