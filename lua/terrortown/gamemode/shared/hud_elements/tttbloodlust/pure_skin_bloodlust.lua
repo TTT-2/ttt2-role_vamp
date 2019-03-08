@@ -75,7 +75,6 @@ if CLIENT then -- CLIENT
 
 		if not IsValid(ply) then return end
 
-		local duration = GetGlobalInt("ttt2_vamp_bloodtime")
 		local multiplier
 
 		local color = VAMPIRE.dkcolor
@@ -84,7 +83,7 @@ if CLIENT then -- CLIENT
 		if IsValid(ply) and ply:IsActive() and ply:Alive() and ply:GetSubRole() == ROLE_VAMPIRE then
 			if not ply:GetNWBool("InBloodlust", false) then
 				local bloodlustTime = ply:GetNWInt("Bloodlust", 0)
-				local delay = cv:GetInt()
+				local delay = GetGlobalInt("ttt2_vamp_bloodtime")
 
 				multiplier = bloodlustTime - CurTime()
 				multiplier = multiplier / delay
