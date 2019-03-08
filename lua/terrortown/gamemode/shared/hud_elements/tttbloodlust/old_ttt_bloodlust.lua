@@ -5,10 +5,24 @@ DEFINE_BASECLASS(base)
 HUDELEMENT.Base = base
 
 if CLIENT then -- CLIENT
+	function HUDELEMENT:PreInitialize()
+		BaseClass.PreInitialize(self)
+
+		hudelements.RegisterChildRelation(self.id, "old_ttt_info", false)
+	end
+
 	function HUDELEMENT:Initialize()
 		local width, height = self.maxwidth, 45
+		local parent = self:GetParent()
+		local parentEl = hudelements.GetStored(parent)
+		local x, y = 15, ScrH() - height - self.maxheight - self.margin
 
-	    self:SetBasePos(15, ScrH() - height - self.maxheight - self.margin)
+		if parentEl then
+			x = parentEl.pos.x
+			y = parentEl.pos.y - self.margin - height - 30
+		end
+
+		self:SetBasePos(x, y)
 		self:SetSize(width, height)
 
 		BaseClass.Initialize(self)
@@ -70,7 +84,7 @@ if CLIENT then -- CLIENT
 			end
 		end
 
-		if HUDManager.IsEditing then
+		if HUDEditor.IsEditing then
 			self:DrawComponent("Bloodlust", edit_colors, "Bloodlust!")
 		elseif multiplier then
 			local col_tbl = {

@@ -1,7 +1,3 @@
-if SERVER then
-	AddCSLuaFile()
-end
-
 local base = "pure_skin_element"
 
 DEFINE_BASECLASS(base)
@@ -58,7 +54,7 @@ if CLIENT then -- CLIENT
 
 	function HUDELEMENT:DrawComponent(multiplier, col, text)
 		multiplier = multiplier or 1
-		
+
 		local pos = self:GetPos()
 		local x, y = pos.x, pos.y
 
