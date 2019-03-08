@@ -151,21 +151,7 @@ hook.Add("Think", "ThinkVampire", function()
 	for _, ply in ipairs(player.GetAll()) do
 		if ply:IsActive() and ply:GetSubRole() == ROLE_VAMPIRE and ply:GetNWInt("Bloodlust", 0) < CurTime() then
 			ply:SetNWBool("InBloodlust", true)
-
-			local health = ply:Health() - 1
-
-			if health > 0 then
-				ply:SetHealth(health)
-			else
-				if SERVER then
-					if ply:GetNWBool("transformedVamp", false) then
-						TransformToVamp(ply)
-					end
-
-					ply:Kill()
-				end
-			end
-
+			ply:TakeDamage(1, game.GetWorld())
 			ply:SetNWInt("Bloodlust", CurTime() + 2)
 		end
 	end
@@ -225,9 +211,10 @@ if SERVER then
 		then
 			dmginfo:ScaleDamage(1.125)
 
-			local heal = (attacker:Health() + dmginfo:GetDamage() * 0.5)
+			local heal = math.ceil(attacker:Health() + dmginfo:GetDamage() * 0.5)
 
-			attacker:SetHealth(math.ceil(heal))
+			attacker:SetMaxHealth(math.max(heal, attacker:GetMaxHealth()))
+			attacker:SetHealth(heal)
 		end
 	end)
 else -- CLIENT
@@ -239,74 +226,6 @@ else -- CLIENT
 			PIGEON.Enable(ply)
 		else
 			PIGEON.Disable(ply)
-		end
-	end)
-
-	surface.CreateFont("BLOODLUST", {font = "Trebuchet24", size = 24, weight = 750})
-
-	local cv = GetConVar("rep_ttt2_vamp_bloodtime")
-
-	hook.Add("HUDPaint", "VampHudBloodlust", function()
-		local ply = LocalPlayer()
-		local rstate = GetRoundState()
-
-		cv = cv or GetConVar("rep_ttt2_vamp_bloodtime")
-
-		if not cv or not VAMPIRE then return end
-
-		if rstate == ROUND_ACTIVE and IsValid(ply) and ply:IsActive() and ply:GetSubRole() == ROLE_VAMPIRE then
-			if not hook.Run("HUDShouldDraw", "TTT2VampBloodlustHUD") then return end
-
-			local color = VAMPIRE.dkcolor
-
-			if not color then return end
-
-			local xPos = CreateClientConVar("ttt2_vamp_hud_x", "0.8", true, false, "The relative x-coordinate (position) of the HUD. (0-100) Def: 0.8")
-			local yPos = CreateClientConVar("ttt2_vamp_hud_y", "83.3", true, false, "The relative y-coordinate (position) of the HUD. (0-100) Def: 83.3")
-
-			local x = math.floor(ScrW() * math.min(math.max(xPos:GetFloat(), 0.01), 100) * 0.01)
-			local y = math.floor(ScrH() * math.min(math.max(yPos:GetFloat(), 0.01), 100) * 0.01)
-
-			draw.RoundedBox(8, x - 5, y - 10, 250, 60, Color(0, 0, 0, 200))
-
-			local multiplier = 1
-
-			if not ply:GetNWBool("InBloodlust", false) then
-				local bloodlustTime = ply:GetNWInt("Bloodlust", 0)
-				local delay = cv:GetInt()
-
-				multiplier = bloodlustTime - CurTime()
-				multiplier = multiplier / delay
-
-				local secondColor = VAMPIRE.bgcolor
-				local r = color.r - (color.r - secondColor.r) * multiplier
-				local g = color.g - (color.g - secondColor.g) * multiplier
-				local b = color.b - (color.b - secondColor.b) * multiplier
-
-				color = Color(r, g, b, 255)
-			end
-
-			draw.RoundedBox(8, x + 4, y + 4, 16 + 216 * multiplier, 27, color)
-
-			surface.SetDrawColor(color)
-			surface.DrawRect(x + 12, y + 5, 216 * multiplier, 25)
-
-			surface.SetTexture(surface.GetTextureID("gui/corner8"))
-
-			surface.DrawRect(x + 5, y + 13, 8, 9)
-			surface.DrawTexturedRectRotated(x + 9, y + 9, 8, 8, 0)
-			surface.DrawTexturedRectRotated(x + 9, y + 26, 8, 8, 90)
-
-			surface.DrawRect(x + 10 + 217 * multiplier, y + 13, 8, 9)
-			surface.DrawTexturedRectRotated(x + 14 + 217 * multiplier, y + 9, 8, 8, 270)
-			surface.DrawTexturedRectRotated(x + 14 + 217 * multiplier, y + 26, 8, 8, 180)
-
-			if ply:GetNWBool("InBloodlust", false) then
-				draw.SimpleText("Bloodlust!", "BLOODLUST", x + 15, y + 7, Color(0, 0, 0), TEXT_ALIGN_LEFT)
-				draw.SimpleText("Bloodlust!", "BLOODLUST", x + 17, y + 5, Color(255, 255, 255), TEXT_ALIGN_LEFT)
-			end
-
-			draw.SimpleText("BLOODLUST", "TabLarge", x + 179, y - 17, Color(255, 255, 255))
 		end
 	end)
 

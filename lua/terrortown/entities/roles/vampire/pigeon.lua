@@ -5,7 +5,6 @@ AddCSLuaFile()
 -- TODO: FIX: vehicles
 -- TODO: FIX: looking up jumps backwards
 -- TODO: FIX: fly handling
--- TODO: FIX: jump to fly
 
 if SERVER then
 	resource.AddFile("sound/bird_sounds/pigeon_idle2.wav")
@@ -24,75 +23,75 @@ PIGEON.Hooks = {}
 -------------------------------------------------------------------------------
 -- HELPER FUNCTIONS
 
-function PIGEON.Enable(player)
-	if player.pigeon then return end
+function PIGEON.Enable(ply)
+	if ply.pigeon then return end
 
 	if CLIENT then
-		player.pigeon = true
+		ply.pigeon = true
 
 		return
 	end
 
-	player:DrawViewModel(false)
-	player:DrawWorldModel(false)
+	ply:DrawViewModel(false)
+	ply:DrawWorldModel(false)
 
-	GAMEMODE:SetPlayerSpeed(player, 250, 500)
+	GAMEMODE:SetPlayerSpeed(ply, 250, 500)
 
-	player:ConCommand("-duck\n")
+	ply:ConCommand("-duck\n")
 
-	player.pigeon = {}
-	player.pigeon.idleTimer = 0
-	player.pigeon.model = player:GetModel()
+	ply.pigeon = {}
+	ply.pigeon.idleTimer = 0
+	ply.pigeon.model = ply:GetModel()
 
-	player:SetModel(PIGEON.model)
+	ply:SetModel(PIGEON.model)
 
-	player.pigeon.ghost = PIGEON.Ghost(player)
+	ply.pigeon.ghost = PIGEON.Ghost(ply)
 
-	player:SetNWEntity("pigeon.ghost", player.pigeon.ghost)
+	ply:SetNWEntity("pigeon.ghost", ply.pigeon.ghost)
 
-	if not player.pigeonHasPrinted then
-		player:PrintMessage(HUD_PRINTTALK, "You're a pigeon! AWESOME!\nJump to start flying and then jump again to speed up.\nSprint to hop forward.\nReload to make a cute noise.\n")
+	if not ply.pigeonHasPrinted then
+		ply:PrintMessage(HUD_PRINTTALK, "You're a pigeon! AWESOME!\nJump to start flying and then jump again to speed up.\nSprint to hop forward.\nReload to make a cute noise.\n")
 
-		player.pigeonHasPrinted = true
+		ply.pigeonHasPrinted = true
 	end
 end
 
-function PIGEON.Disable(player)
-	player:ConCommand("-duck\n")
+function PIGEON.Disable(ply)
+	ply:ConCommand("-duck\n")
 
 	if CLIENT then
-		player.pigeon = false
+		ply.pigeon = false
 
 		return
 	end
 
-	player:SetRunSpeed(220)
-	player:SetWalkSpeed(220)
-	player:SetMaxSpeed(220)
+	ply:SetRunSpeed(220)
+	ply:SetWalkSpeed(220)
+	ply:SetMaxSpeed(220)
 
-	player:DrawViewModel(true)
-	player:DrawWorldModel(true)
+	ply:DrawViewModel(true)
+	ply:DrawWorldModel(true)
 
-	if not player.pigeon then return end
+	if not ply.pigeon then return end
 
-	player.pigeon.ghost:Remove()
+	ply.pigeon.ghost:Remove()
 
-	player:SetNWEntity("pigeon.ghost", nil)
-	player:SetModel(player.pigeon.model)
-	player:SetMoveType(MOVETYPE_WALK)
+	ply:SetNWEntity("pigeon.ghost", nil)
+	ply:SetModel(ply.pigeon.model)
+	ply:SetMoveType(MOVETYPE_WALK)
 
-	player.pigeon = nil
+	ply.pigeon = nil
 end
 
-function PIGEON.Ghost(player)
+function PIGEON.Ghost(ply)
 	local e = ents.Create("prop_dynamic")
-	e:SetAngles(player:GetAngles())
+	e:SetAngles(ply:GetAngles())
 	e:SetCollisionGroup(COLLISION_GROUP_NONE)
 	e:SetColor(Color(255, 255, 255, 0))
 	e:SetMoveType(MOVETYPE_NONE)
 	e:SetModel(PIGEON.model)
-	e:SetParent(player)
-	e:SetPos(player:GetPos())
+	e:SetParent(ply)
+	e:SetPos(ply:GetPos())
 	e:SetRenderMode(RENDERMODE_TRANSALPHA)
 	e:SetSolid(SOLID_NONE)
 	e:Spawn()
@@ -100,11 +99,11 @@ function PIGEON.Ghost(player)
 	return e
 end
 
-function PIGEON.Idle(player)
-	if CurTime() >= player.pigeon.idleTimer then
-		player.pigeon.idleTimer = CurTime() + 2
+function PIGEON.Idle(ply)
+	if CurTime() >= ply.pigeon.idleTimer then
+		ply.pigeon.idleTimer = CurTime() + 2
 
-		player:EmitSound(PIGEON.sounds.idle, 100, 100)
+		ply:EmitSound(PIGEON.sounds.idle, 100, 100)
 	end
 end
 
@@ -137,146 +136,146 @@ function PIGEON.HooksDisable()
 	end
 end
 
--- CLIENT HOOKS
-function PIGEON.Hooks.CalcView(player, pos, ang, fov)
-	if not player.pigeon then return end
+if CLIENT then
+	function PIGEON.Hooks.CalcView(ply, pos, ang, fov)
+		if not ply.pigeon then return end
 
-	ang = player:GetAimVector():Angle()
+		ang = ply:GetAimVector():Angle()
 
-	local ghost = player:GetNWEntity("pigeon.ghost")
-	if ghost and ghost:IsValid() then
-		if GetViewEntity() == player then
-			ghost:SetColor(Color(255, 255, 255, 255))
-		else
-			ghost:SetColor(Color(255, 255, 255, 0))
+		local ghost = ply:GetNWEntity("pigeon.ghost")
+		if ghost and ghost:IsValid() then
+			if GetViewEntity() == ply then
+				ghost:SetColor(Color(255, 255, 255, 255))
+			else
+				ghost:SetColor(Color(255, 255, 255, 0))
 
-			return
-		end
-	end
-
-	local t = {}
-	t.start = player:GetPos() + ang:Up() * 20
-	t.endpos = t.start + ang:Forward() * -50
-	t.filter = player
-
-	local tr = util.TraceLine(t)
-
-	pos = tr.HitPos
-
-	if tr.Fraction < 1 then
-		pos = pos + tr.HitNormal * 2
-	end
-
-	return GAMEMODE:CalcView(player, pos, ang, fov)
-end
-
--- SERVER HOOKS
-function PIGEON.Hooks.Hurt(player, attacker)
-	if player.pigeon then
-		player:EmitSound(PIGEON.sounds.pain)
-	end
-end
-
-function PIGEON.Hooks.KeyPress(player, key)
-	if not player.pigeon then return end
-
-	if key == IN_JUMP and player:IsOnGround() then
-		--	player:SetMoveType(4)
-		--	player:SetVelocity(player:GetForward() * 300 + Vector(0, 0, 100))
-		--elseif key == IN_JUMP and player:IsOnGround() then
-		player:SetMoveType(2)
-		player:SetVelocity(player:GetForward() * 300 + player:GetAimVector())
-	elseif key == IN_JUMP and not player:IsOnGround() then
-		player:SetVelocity(player:GetForward() * 300 + player:GetAimVector())
-	elseif player:IsOnGround() then
-		player:SetMoveType(2)
-	elseif not player:IsOnGround() and key == IN_WALK then
-		player:SetMaxSpeed(250)
-	else
-		player:SetMoveType(0)
-	end
-
-	if player:OnGround() and key == IN_SPEED then
-		player:SetVelocity(player:GetForward() * 1500 + Vector(0, 0, 100))
-		player:SetMoveType(2)
-	end
-end
-
-function PIGEON.Hooks.SetAnimation(player, animation)
-	if player.pigeon then
-		return false
-	end
-end
-
-function PIGEON.Hooks.SetModel(player)
-	if player.pigeon then
-		return false
-	end
-end
-
-function PIGEON.Hooks.UpdateAnimation(player)
-	if not player.pigeon then return end
-
-	local rate = 2
-	local sequence = "idle01"
-	local speed = player:GetVelocity():Length()
-
-	if player:IsOnGround() then
-		player:SetMoveType(2)
-
-		if speed > 0 then
-			sequence = "Walk"
-
-			player:SetMaxSpeed(200)
-
-			if speed > 200 then
-				sequence = "Run"
-				rate = 1
+				return
 			end
 		end
-	elseif not player:IsOnGround() then
-		player:SetMoveType(4)
 
-		rate = 1
+		local t = {}
+		t.start = ply:GetPos() + ang:Up() * 20
+		t.endpos = t.start + ang:Forward() * -50
+		t.filter = ply
 
-		player:SetMaxSpeed(100)
+		local tr = util.TraceLine(t)
 
-		if speed > 0 then
-			sequence = "Soar"
+		pos = tr.HitPos
 
-			if speed > 400 then
-				sequence = "Fly01"
+		if tr.Fraction < 1 then
+			pos = pos + tr.HitNormal * 2
+		end
+
+		return GAMEMODE:CalcView(ply, pos, ang, fov)
+	end
+else -- SERVER
+	function PIGEON.Hooks.Hurt(ply, attacker)
+		if ply.pigeon then
+			ply:EmitSound(PIGEON.sounds.pain)
+		end
+	end
+
+	function PIGEON.Hooks.KeyPress(ply, key)
+		if not ply.pigeon then return end
+
+		if key == IN_JUMP and ply:IsOnGround() then
+			--	ply:SetMoveType(4)
+			--	ply:SetVelocity(ply:GetForward() * 300 + Vector(0, 0, 100))
+			--elseif key == IN_JUMP and ply:IsOnGround() then
+			ply:SetMoveType(2)
+			ply:SetVelocity(ply:GetForward() * 300 + ply:GetAimVector())
+		elseif key == IN_JUMP and not ply:IsOnGround() then
+			ply:SetVelocity(ply:GetForward() * 300 + ply:GetAimVector())
+		elseif ply:IsOnGround() then
+			ply:SetMoveType(2)
+		elseif not ply:IsOnGround() and key == IN_WALK then
+			ply:SetMaxSpeed(250)
+		else
+			ply:SetMoveType(0)
+		end
+
+		if ply:OnGround() and key == IN_SPEED then
+			ply:SetVelocity(ply:GetForward() * 1500 + Vector(0, 0, 100))
+			ply:SetMoveType(2)
+		end
+	end
+
+	function PIGEON.Hooks.SetAnimation(ply, animation)
+		if ply.pigeon then
+			return false
+		end
+	end
+
+	function PIGEON.Hooks.SetModel(ply)
+		if ply.pigeon then
+			return false
+		end
+	end
+
+	function PIGEON.Hooks.UpdateAnimation(ply)
+		if not ply.pigeon then return end
+
+		local rate = 2
+		local sequence = "idle01"
+		local speed = ply:GetVelocity():Length()
+
+		if ply:IsOnGround() then
+			ply:SetMoveType(2)
+
+			if speed > 0 then
+				sequence = "Walk"
+
+				ply:SetMaxSpeed(200)
+
+				if speed > 200 then
+					sequence = "Run"
+					rate = 1
+				end
+			end
+		elseif not ply:IsOnGround() then
+			ply:SetMoveType(4)
+
+			rate = 1
+
+			ply:SetMaxSpeed(100)
+
+			if speed > 0 then
+				sequence = "Soar"
+
+				if speed > 400 then
+					sequence = "Fly01"
+				end
+			end
+		else
+			if ply:WaterLevel() > 1 then
+				sequence = "Soar"
+			else
+				sequence = "Idle01"
 			end
 		end
-	else
-		if player:WaterLevel() > 1 then
-			sequence = "Soar"
-		else
-			sequence = "Idle01"
+
+		if PIGEON.model ~= "models/pigeon.mdl" then return end
+
+		local sequenceIndex = ply:LookupSequence(sequence)
+
+		if ply:GetSequence() ~= sequenceIndex then
+			ply:ResetSequence(sequenceIndex)
 		end
+
+		sequenceIndex = ply.pigeon.ghost:LookupSequence(sequence)
+
+		if ply.pigeon.ghost:GetSequence() ~= sequenceIndex then
+			ply.pigeon.ghost:Fire("setanimation", sequence, 0)
+		end
+
+		ply:SetPlaybackRate(rate)
+
+		ply.pigeon.ghost:SetPlaybackRate(rate)
 	end
 
-	if PIGEON.model ~= "models/pigeon.mdl" then return end
-
-	local sequenceIndex = player:LookupSequence(sequence)
-
-	if player:GetSequence() ~= sequenceIndex then
-		player:ResetSequence(sequenceIndex)
-	end
-
-	sequenceIndex = player.pigeon.ghost:LookupSequence(sequence)
-
-	if player.pigeon.ghost:GetSequence() ~= sequenceIndex then
-		player.pigeon.ghost:Fire("setanimation", sequence, 0)
-	end
-
-	player:SetPlaybackRate(rate)
-
-	player.pigeon.ghost:SetPlaybackRate(rate)
-end
-
-function PIGEON.Hooks.PickupWeapon(player, wep)
-	if player.pigeon then
-		return false
+	function PIGEON.Hooks.PickupWeapon(ply, wep)
+		if ply.pigeon then
+			return false
+		end
 	end
 end
