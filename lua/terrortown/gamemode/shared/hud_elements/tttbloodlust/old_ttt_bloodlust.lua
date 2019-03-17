@@ -56,7 +56,10 @@ if CLIENT then -- CLIENT
 		local ty = y + self.margin
 
 		self:PaintBar(tx, ty, bar_width, bar_height, col, multiplier)
-		self:ShadowedText(val, "HealthAmmo", tx + bar_width * 0.5, ty + bar_height * 0.5, COLOR_WHITE, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+
+		if val then
+			self:ShadowedText(val, "HealthAmmo", tx + bar_width * 0.5, ty + bar_height * 0.5, COLOR_WHITE, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		end
 
 		draw.SimpleText(name, "TabLarge", x + self.margin * 2, y, COLOR_WHITE, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 	end
