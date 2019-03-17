@@ -5,7 +5,7 @@ DEFINE_BASECLASS(base)
 HUDELEMENT.Base = base
 
 if CLIENT then -- CLIENT
-	local pad = 14 -- padding
+	local pad = 7 -- padding
 	local iconSize = 64
 
 	local const_defaults = {
