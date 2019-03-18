@@ -17,7 +17,10 @@ if CLIENT then -- CLIENT
 	function HUDELEMENT:PreInitialize()
 		BaseClass.PreInitialize(self)
 
-		huds.GetStored("pure_skin"):ForceElement(self.id)
+		local hud = huds.GetStored("pure_skin")
+		if not hud then return end
+
+		hud:ForceElement(self.id)
 	end
 
 	function HUDELEMENT:Initialize()
