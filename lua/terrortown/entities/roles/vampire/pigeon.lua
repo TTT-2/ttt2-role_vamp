@@ -74,7 +74,9 @@ function PIGEON.Disable(ply)
 
 	if not ply.pigeon then return end
 
-	ply.pigeon.ghost:Remove()
+	if IsValid(ply.pigeon.ghost) then
+		ply.pigeon.ghost:Remove()
+	end
 
 	ply:SetNWEntity("pigeon.ghost", nil)
 	ply:SetModel(ply.pigeon.model)
