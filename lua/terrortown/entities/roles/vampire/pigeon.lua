@@ -54,6 +54,8 @@ function PIGEON.Enable(ply)
 
 		ply.pigeonHasPrinted = true
 	end
+
+	DamageLog("TTT2-Vampire: " .. ply:Nick() .. " transformed into a pigeon.")
 end
 
 function PIGEON.Disable(ply)
@@ -83,6 +85,8 @@ function PIGEON.Disable(ply)
 	ply:SetMoveType(MOVETYPE_WALK)
 
 	ply.pigeon = nil
+
+	DamageLog("TTT2-Vampire: " .. ply:Nick() .. " transformed back into an human.")
 end
 
 function PIGEON.Ghost(ply)
