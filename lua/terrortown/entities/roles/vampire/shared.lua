@@ -42,28 +42,28 @@ function ROLE:Initialize()
 	if CLIENT then
 		-- setup here is not necessary but if you want to access the role data, you need to start here
 		-- setup basic translation !
-		LANG.AddToLanguage("English", VAMPIRE.name, "Vampire")
-		LANG.AddToLanguage("English", "info_popup_" .. VAMPIRE.name, [[You are a Vampire!
+		LANG.AddToLanguage("English", self.name, "Vampire")
+		LANG.AddToLanguage("English", "info_popup_" .. self.name, [[You are a Vampire!
 It's time for some blood!
 Otherwise, you will die...]])
-		LANG.AddToLanguage("English", "body_found_" .. VAMPIRE.abbr, "This was a Vampire...")
-		LANG.AddToLanguage("English", "search_role_" .. VAMPIRE.abbr, "This person was a Vampire!")
-		LANG.AddToLanguage("English", "target_" .. VAMPIRE.name, "Vampire")
-		LANG.AddToLanguage("English", "ttt2_desc_" .. VAMPIRE.name, [[The Vampire is a Traitor (who works together with the other traitors) and the goal is to kill all other roles except the other traitor roles ^^
+		LANG.AddToLanguage("English", "body_found_" .. self.abbr, "This was a Vampire...")
+		LANG.AddToLanguage("English", "search_role_" .. self.abbr, "This person was a Vampire!")
+		LANG.AddToLanguage("English", "target_" .. self.name, "Vampire")
+		LANG.AddToLanguage("English", "ttt2_desc_" .. self.name, [[The Vampire is a Traitor (who works together with the other traitors) and the goal is to kill all other roles except the other traitor roles ^^
 The vampire CAN'T access the ([C]) shop, but he can transform into a pigeon by pressing [LALT] (Walk-slowly key). To make it balanced, the Vampire needs to kill another player every minute. Otherwise, he will fall into Bloodlust. In Bloodlust, the Vampire loses 1 hp every 2 seconds.
 In Bloodlust, the vampire heals 50% of the damage he did to other players. In addition to that, he can just transform into Pigeon if he is in bloodlust. So you be also able to trigger into bloodlust, but it's not possible to undo it.]])
 
 		---------------------------------
 
 		-- maybe this language as well...
-		LANG.AddToLanguage("Deutsch", VAMPIRE.name, "Vampir")
-		LANG.AddToLanguage("Deutsch", "info_popup_" .. VAMPIRE.name, [[Du bist ein Vampir!
+		LANG.AddToLanguage("Deutsch", self.name, "Vampir")
+		LANG.AddToLanguage("Deutsch", "info_popup_" .. self.name, [[Du bist ein Vampir!
 Es ist Zeit für etwas Blut!
 Ansonsten wirst du sterben...]])
-		LANG.AddToLanguage("Deutsch", "body_found_" .. VAMPIRE.abbr, "Er war ein Vampir...")
-		LANG.AddToLanguage("Deutsch", "search_role_" .. VAMPIRE.abbr, "Diese Person war ein Vampir!")
-		LANG.AddToLanguage("Deutsch", "target_" .. VAMPIRE.name, "Vampir")
-		LANG.AddToLanguage("Deutsch", "ttt2_desc_" .. VAMPIRE.name, [[Der Vampir ist ein Verräter (der mit den anderen Verräter-Rollen zusammenarbeitet) und dessen Ziel es ist, alle anderen Rollen (außer Verräter-Rollen) zu töten ^^
+		LANG.AddToLanguage("Deutsch", "body_found_" .. self.abbr, "Er war ein Vampir...")
+		LANG.AddToLanguage("Deutsch", "search_role_" .. self.abbr, "Diese Person war ein Vampir!")
+		LANG.AddToLanguage("Deutsch", "target_" .. self.name, "Vampir")
+		LANG.AddToLanguage("Deutsch", "ttt2_desc_" .. self.name, [[Der Vampir ist ein Verräter (der mit den anderen Verräter-Rollen zusammenarbeitet) und dessen Ziel es ist, alle anderen Rollen (außer Verräter-Rollen) zu töten ^^
 Er kann NICHT den ([C]) Shop betreten, doch dafür kann er sich, wenn er die Taste [LALT] (Walk-slowly Taste) drückt, in eine Taube verwandeln. Damit der Vampir nicht zu stark ist, muss er jede Minute einen anderen Spieler killen. Ansonsten fällt er in den Blutdurst. Im Blutdurst verliert der Vampir jede Sekunde 1hp.
 Allerdings heilt er sich im Blutdurst auch um 50% des Schadens, den er anderen Spielern zufügt. Er kann sich auch nur im Blutdurst transformieren. Du kannst also mit [LALT] den Blutdurst triggern, doch es nicht rückgängig machen.]])
 	end
