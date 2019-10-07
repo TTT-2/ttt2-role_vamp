@@ -15,40 +15,30 @@ end
 
 include("pigeon.lua")
 
-ROLE.color = Color(149, 43, 37, 255) -- ...
-ROLE.dkcolor = Color(67, 3, 0, 255) -- ...
-ROLE.bgcolor = Color(29, 116, 40, 255) -- ...
-ROLE.abbr = "vamp" -- abbreviation
-ROLE.defaultEquipment = SPECIAL_EQUIPMENT -- here you can set up your own default equipment
-ROLE.surviveBonus = 0.5 -- bonus multiplier for every survive while another player was killed
-ROLE.scoreKillsMultiplier = 5 -- multiplier for kill of player of another team
-ROLE.scoreTeamKillsMultiplier = -16 -- multiplier for teamkill
+function ROLE:PreInitialize()
+	self.color = Color(149, 43, 37, 255) -- ...
+	self.dkcolor = Color(67, 3, 0, 255) -- ...
+	self.bgcolor = Color(29, 116, 40, 255) -- ...
+	self.abbr = "vamp" -- abbreviation
+	self.surviveBonus = 0.5 -- bonus multiplier for every survive while another player was killed
+	self.scoreKillsMultiplier = 5 -- multiplier for kill of player of another team
+	self.scoreTeamKillsMultiplier = -16 -- multiplier for teamkill
+	
+	self.defaultTeam = TEAM_TRAITOR
+	self.defaultEquipment = SPECIAL_EQUIPMENT -- here you can set up your own default equipment
 
-ROLE.conVarData = {
-	pct = 0.1, -- necessary: percentage of getting this role selected (per player)
-	maximum = 1, -- maximum amount of roles in a round
-	minPlayers = 10, -- minimum amount of players until this role is able to get selected
-	togglable = true, -- option to toggle a role for a client if possible (F1 menu)
-	credits = 2
-}
+	self.conVarData = {
+		pct = 0.1, -- necessary: percentage of getting this role selected (per player)
+		maximum = 1, -- maximum amount of roles in a round
+		minPlayers = 10, -- minimum amount of players until this role is able to get selected
+		togglable = true, -- option to toggle a role for a client if possible (F1 menu)
+		credits = 2
+	}
+end
 
--- now link this subrole with its baserole
-hook.Add("TTT2BaseRoleInit", "TTT2ConBRTWithVamp", function()
-	VAMPIRE:SetBaseRole(ROLE_TRAITOR)
-end)
-
-hook.Add("TTT2RolesLoaded", "AddVampTeam", function()
-	VAMPIRE.defaultTeam = TEAM_TRAITOR
-end)
-
-hook.Add("TTTUlxDynamicRCVars", "TTTUlxDynamicVampCVars", function(tbl)
-	tbl[ROLE_VAMPIRE] = tbl[ROLE_VAMPIRE] or {}
-
-	table.insert(tbl[ROLE_VAMPIRE], {cvar = "ttt2_vamp_bloodtime", slider = true, desc = "vampire bloodlust time"})
-end)
-
--- if sync of roles has finished
-hook.Add("TTT2FinishedLoading", "VampInitT", function()
+function ROLE:Initialize()
+	roles.SetBaseRole(self, ROLE_TRAITOR)
+	
 	if CLIENT then
 		-- setup here is not necessary but if you want to access the role data, you need to start here
 		-- setup basic translation !
@@ -77,6 +67,12 @@ Ansonsten wirst du sterben...]])
 Er kann NICHT den ([C]) Shop betreten, doch dafür kann er sich, wenn er die Taste [LALT] (Walk-slowly Taste) drückt, in eine Taube verwandeln. Damit der Vampir nicht zu stark ist, muss er jede Minute einen anderen Spieler killen. Ansonsten fällt er in den Blutdurst. Im Blutdurst verliert der Vampir jede Sekunde 1hp.
 Allerdings heilt er sich im Blutdurst auch um 50% des Schadens, den er anderen Spielern zufügt. Er kann sich auch nur im Blutdurst transformieren. Du kannst also mit [LALT] den Blutdurst triggern, doch es nicht rückgängig machen.]])
 	end
+end
+
+hook.Add("TTTUlxDynamicRCVars", "TTTUlxDynamicVampCVars", function(tbl)
+	tbl[ROLE_VAMPIRE] = tbl[ROLE_VAMPIRE] or {}
+
+	table.insert(tbl[ROLE_VAMPIRE], {cvar = "ttt2_vamp_bloodtime", slider = true, desc = "vampire bloodlust time"})
 end)
 
 if SERVER then
