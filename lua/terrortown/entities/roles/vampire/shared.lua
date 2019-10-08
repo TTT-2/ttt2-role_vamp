@@ -203,8 +203,8 @@ if SERVER then
 		and attacker:GetNWBool("InBloodlust", false)
 		then
 			dmginfo:ScaleDamage(1.125)
-
-			local heal = math.ceil(attacker:Health() + dmginfo:GetDamage() * 0.5)
+			
+			local heal = math.min(ply:Health() or 100, math.ceil(attacker:Health() + dmginfo:GetDamage() * 0.5))
 
 			attacker:SetMaxHealth(math.max(heal, attacker:GetMaxHealth()))
 			attacker:SetHealth(heal)
