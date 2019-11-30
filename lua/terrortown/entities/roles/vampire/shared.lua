@@ -204,7 +204,8 @@ if SERVER then
 		then
 			dmginfo:ScaleDamage(1.125)
 			
-			local heal = math.min(ply:Health() or 100, math.ceil(attacker:Health() + dmginfo:GetDamage() * 0.5))
+			local oldHealth = attacker:Health()
+			local heal = math.min(oldHealth + (ply:Health() or 100), math.ceil(oldHealth + dmginfo:GetDamage() * 0.5))
 
 			attacker:SetMaxHealth(math.max(heal, attacker:GetMaxHealth()))
 			attacker:SetHealth(heal)
