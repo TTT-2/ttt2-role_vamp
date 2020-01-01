@@ -16,14 +16,13 @@ end
 include("pigeon.lua")
 
 function ROLE:PreInitialize()
-	self.color = Color(149, 43, 37, 255) -- ...
-	self.dkcolor = Color(67, 3, 0, 255) -- ...
-	self.bgcolor = Color(29, 116, 40, 255) -- ...
+	self.color = Color(149, 43, 37, 255)
+
 	self.abbr = "vamp" -- abbreviation
 	self.surviveBonus = 0.5 -- bonus multiplier for every survive while another player was killed
 	self.scoreKillsMultiplier = 5 -- multiplier for kill of player of another team
 	self.scoreTeamKillsMultiplier = -16 -- multiplier for teamkill
-	
+
 	self.defaultTeam = TEAM_TRAITOR
 	self.defaultEquipment = SPECIAL_EQUIPMENT -- here you can set up your own default equipment
 
@@ -38,10 +37,9 @@ end
 
 function ROLE:Initialize()
 	roles.SetBaseRole(self, ROLE_TRAITOR)
-	
+
 	if CLIENT then
-		-- setup here is not necessary but if you want to access the role data, you need to start here
-		-- setup basic translation !
+		-- Role specific language elements
 		LANG.AddToLanguage("English", self.name, "Vampire")
 		LANG.AddToLanguage("English", "info_popup_" .. self.name, [[You are a Vampire!
 It's time for some blood!
@@ -53,9 +51,6 @@ Otherwise, you will die...]])
 The vampire CAN'T access the ([C]) shop, but he can transform into a pigeon by pressing [LALT] (Walk-slowly key). To make it balanced, the Vampire needs to kill another player every minute. Otherwise, he will fall into Bloodlust. In Bloodlust, the Vampire loses 1 hp every 2 seconds.
 In Bloodlust, the vampire heals 50% of the damage he did to other players. In addition to that, he can just transform into Pigeon if he is in bloodlust. So you be also able to trigger into bloodlust, but it's not possible to undo it.]])
 
-		---------------------------------
-
-		-- maybe this language as well...
 		LANG.AddToLanguage("Deutsch", self.name, "Vampir")
 		LANG.AddToLanguage("Deutsch", "info_popup_" .. self.name, [[Du bist ein Vampir!
 Es ist Zeit für etwas Blut!
@@ -203,7 +198,7 @@ if SERVER then
 		and attacker:GetNWBool("InBloodlust", false)
 		then
 			dmginfo:ScaleDamage(1.125)
-			
+
 			local oldHealth = attacker:Health()
 			local heal = math.min(oldHealth + (ply:Health() or 100), math.ceil(oldHealth + dmginfo:GetDamage() * 0.5))
 
@@ -211,7 +206,9 @@ if SERVER then
 			attacker:SetHealth(heal)
 		end
 	end)
-else -- CLIENT
+end
+
+if CLIENT then
 	net.Receive("TTT2VampPigeon", function()
 		local ply = LocalPlayer()
 

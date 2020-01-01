@@ -70,10 +70,6 @@ if CLIENT then -- CLIENT
 		self:DrawBar(x + pad, y + pad, w - pad * 2, h - pad * 2, col, multiplier, scale, text)
 
 		self:DrawLines(x, y, w, h, self.basecolor.a)
-
-		--local nSize = iconSize - 8
-
-		--util.DrawFilteredTexturedRect(x, y + 2 - (nSize - h), nSize, nSize, self.icon)
 	end
 
 	function HUDELEMENT:ShouldDraw()
