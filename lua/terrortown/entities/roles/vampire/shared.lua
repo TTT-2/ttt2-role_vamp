@@ -52,14 +52,14 @@ Otherwise, you will die...]])
 The vampire CAN'T access the ([C]) shop, but he can transform into a pigeon by pressing [LALT] (Walk-slowly key). To make it balanced, the Vampire needs to kill another player every minute. Otherwise, he will fall into Bloodlust. In Bloodlust, the Vampire loses 1 hp every 2 seconds.
 In Bloodlust, the vampire heals 50% of the damage he did to other players. In addition to that, he can just transform into Pigeon if he is in bloodlust. So you be also able to trigger into bloodlust, but it's not possible to undo it.]])
 
-		LANG.AddToLanguage("Italian", self.name, "Vampiro")
-		LANG.AddToLanguage("Italian", "info_popup_" .. self.name, [[Sei un Vampiro!
+		LANG.AddToLanguage("Italiano", self.name, "Vampiro")
+		LANG.AddToLanguage("Italiano", "info_popup_" .. self.name, [[Sei un Vampiro!
 È tempo di prendere un po' di sangue!
 Altrimenti, morirai...]])
-		LANG.AddToLanguage("Italian", "body_found_" .. self.abbr, "Era un Vampiro...")
-		LANG.AddToLanguage("Italian", "search_role_" .. self.abbr, "Questa persona era un Vampiro!")
-		LANG.AddToLanguage("Italian", "target_" .. self.name, "Vampiro")
-		LANG.AddToLanguage("Italian", "ttt2_desc_" .. self.name, [[Il Vampiro è un Traditore (che collabora con gli altri traditori) ed il suo obiettivo è quello di uccidere tutti gli altri ruoli eccetto gli altri traditori ^^
+		LANG.AddToLanguage("Italiano", "body_found_" .. self.abbr, "Era un Vampiro...")
+		LANG.AddToLanguage("Italiano", "search_role_" .. self.abbr, "Questa persona era un Vampiro!")
+		LANG.AddToLanguage("Italiano", "target_" .. self.name, "Vampiro")
+		LANG.AddToLanguage("Italiano", "ttt2_desc_" .. self.name, [[Il Vampiro è un Traditore (che collabora con gli altri traditori) ed il suo obiettivo è quello di uccidere tutti gli altri ruoli eccetto gli altri traditori ^^
 Il vampiro NON PUÒ lo shop con ([C]), ma può trasformarsi in un piccione premendo [LALT] (Tasto per camminare lentamente). Per bilanciarlo, il vampiro deve uccidere un giocatore ogni minuto. Altrimenti, andrà in Sete di Sangue. In Sete di Sangue, il Vampiro perde 1 HP ogni 2 secondi.
 In Sete di Sangue, il vampiro si cura del 50% del danno che ha fatto agli altri giocatori. Oltre a questo, se ti trasformi in piccione entrerai in Sete di Sangue. Potrai attivare la Sete di Sangue, ma non puoi tornare indietro.]])
 
