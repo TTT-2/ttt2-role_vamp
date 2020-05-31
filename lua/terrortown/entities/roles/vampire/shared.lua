@@ -8,9 +8,6 @@ if SERVER then
 	util.AddNetworkString("TTT2RequestVampTransformation")
 
 	CreateConVar("ttt2_vamp_bloodtime", "60", {FCVAR_ARCHIVE, FCVAR_NOTIFY})
-else
-	CreateClientConVar("ttt2_vamp_hud_x", "0.8", true, false, "The relative x-coordinate (position) of the HUD. (0-100) Def: 0.8")
-	CreateClientConVar("ttt2_vamp_hud_y", "83.3", true, false, "The relative y-coordinate (position) of the HUD. (0-100) Def: 83.3")
 end
 
 include("pigeon.lua")
@@ -38,48 +35,12 @@ end
 
 function ROLE:Initialize()
 	roles.SetBaseRole(self, ROLE_TRAITOR)
-
-	if CLIENT then
-		-- Role specific language elements
-		LANG.AddToLanguage("English", self.name, "Vampire")
-		LANG.AddToLanguage("English", "info_popup_" .. self.name, [[You are a Vampire!
-It's time for some blood!
-Otherwise, you will die...]])
-		LANG.AddToLanguage("English", "body_found_" .. self.abbr, "This was a Vampire...")
-		LANG.AddToLanguage("English", "search_role_" .. self.abbr, "This person was a Vampire!")
-		LANG.AddToLanguage("English", "target_" .. self.name, "Vampire")
-		LANG.AddToLanguage("English", "ttt2_desc_" .. self.name, [[The Vampire is a Traitor (who works together with the other traitors) and the goal is to kill all other roles except the other traitor roles ^^
-The vampire CAN'T access the ([C]) shop, but he can transform into a pigeon by pressing [LALT] (Walk-slowly key). To make it balanced, the Vampire needs to kill another player every minute. Otherwise, he will fall into Bloodlust. In Bloodlust, the Vampire loses 1 hp every 2 seconds.
-In Bloodlust, the vampire heals 50% of the damage he did to other players. In addition to that, he can just transform into Pigeon if he is in bloodlust. So you be also able to trigger into bloodlust, but it's not possible to undo it.]])
-
-		LANG.AddToLanguage("Italiano", self.name, "Vampiro")
-		LANG.AddToLanguage("Italiano", "info_popup_" .. self.name, [[Sei un Vampiro!
-È tempo di prendere un po' di sangue!
-Altrimenti, morirai...]])
-		LANG.AddToLanguage("Italiano", "body_found_" .. self.abbr, "Era un Vampiro...")
-		LANG.AddToLanguage("Italiano", "search_role_" .. self.abbr, "Questa persona era un Vampiro!")
-		LANG.AddToLanguage("Italiano", "target_" .. self.name, "Vampiro")
-		LANG.AddToLanguage("Italiano", "ttt2_desc_" .. self.name, [[Il Vampiro è un Traditore (che collabora con gli altri traditori) ed il suo obiettivo è quello di uccidere tutti gli altri ruoli eccetto gli altri traditori ^^
-Il vampiro NON PUÒ lo shop con ([C]), ma può trasformarsi in un piccione premendo [LALT] (Tasto per camminare lentamente). Per bilanciarlo, il vampiro deve uccidere un giocatore ogni minuto. Altrimenti, andrà in Sete di Sangue. In Sete di Sangue, il Vampiro perde 1 HP ogni 2 secondi.
-In Sete di Sangue, il vampiro si cura del 50% del danno che ha fatto agli altri giocatori. Oltre a questo, se ti trasformi in piccione entrerai in Sete di Sangue. Potrai attivare la Sete di Sangue, ma non puoi tornare indietro.]])
-
-		LANG.AddToLanguage("Deutsch", self.name, "Vampir")
-		LANG.AddToLanguage("Deutsch", "info_popup_" .. self.name, [[Du bist ein Vampir!
-Es ist Zeit für etwas Blut!
-Ansonsten wirst du sterben...]])
-		LANG.AddToLanguage("Deutsch", "body_found_" .. self.abbr, "Er war ein Vampir...")
-		LANG.AddToLanguage("Deutsch", "search_role_" .. self.abbr, "Diese Person war ein Vampir!")
-		LANG.AddToLanguage("Deutsch", "target_" .. self.name, "Vampir")
-		LANG.AddToLanguage("Deutsch", "ttt2_desc_" .. self.name, [[Der Vampir ist ein Verräter (der mit den anderen Verräter-Rollen zusammenarbeitet) und dessen Ziel es ist, alle anderen Rollen (außer Verräter-Rollen) zu töten ^^
-Er kann NICHT den ([C]) Shop betreten, doch dafür kann er sich, wenn er die Taste [LALT] (Walk-slowly Taste) drückt, in eine Taube verwandeln. Damit der Vampir nicht zu stark ist, muss er jede Minute einen anderen Spieler killen. Ansonsten fällt er in den Blutdurst. Im Blutdurst verliert der Vampir jede Sekunde 1hp.
-Allerdings heilt er sich im Blutdurst auch um 50% des Schadens, den er anderen Spielern zufügt. Er kann sich auch nur im Blutdurst transformieren. Du kannst also mit [LALT] den Blutdurst triggern, doch es nicht rückgängig machen.]])
-	end
 end
 
 hook.Add("TTTUlxDynamicRCVars", "TTTUlxDynamicVampCVars", function(tbl)
 	tbl[ROLE_VAMPIRE] = tbl[ROLE_VAMPIRE] or {}
 
-	table.insert(tbl[ROLE_VAMPIRE], {cvar = "ttt2_vamp_bloodtime", slider = true, desc = "vampire bloodlust time"})
+	table.insert(tbl[ROLE_VAMPIRE], {cvar = "ttt2_vamp_bloodtime", slider = true, desc = "vampire bloodlust time (def: 60)"})
 end)
 
 if SERVER then
@@ -90,7 +51,11 @@ if SERVER then
 			savedWeapons[ply:SteamID64()] = {}
 
 			for _, wep in pairs(ply:GetWeapons()) do
-				savedWeapons[ply:SteamID64()][#savedWeapons[ply:SteamID64()] + 1] = {cls = wep:GetClass(), clip1 = wep:Clip1(), clip2 = wep:Clip2()}
+				savedWeapons[ply:SteamID64()][#savedWeapons[ply:SteamID64()] + 1] = {
+					cls = wep:GetClass(),
+					clip1 = wep:Clip1(),
+					clip2 = wep:Clip2()
+				}
 			end
 
 			ply:StripWeapons()
