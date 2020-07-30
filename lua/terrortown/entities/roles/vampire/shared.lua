@@ -6,8 +6,6 @@ if SERVER then
 
 	util.AddNetworkString("TTT2VampPigeon")
 	util.AddNetworkString("TTT2RequestVampTransformation")
-
-	CreateConVar("ttt2_vamp_bloodtime", "60", {FCVAR_ARCHIVE, FCVAR_NOTIFY})
 end
 
 include("pigeon.lua")
@@ -36,12 +34,6 @@ end
 function ROLE:Initialize()
 	roles.SetBaseRole(self, ROLE_TRAITOR)
 end
-
-hook.Add("TTTUlxDynamicRCVars", "TTTUlxDynamicVampCVars", function(tbl)
-	tbl[ROLE_VAMPIRE] = tbl[ROLE_VAMPIRE] or {}
-
-	table.insert(tbl[ROLE_VAMPIRE], {cvar = "ttt2_vamp_bloodtime", slider = true, desc = "vampire bloodlust time (def: 60)"})
-end)
 
 if SERVER then
 	local savedWeapons = savedWeapons or {}
@@ -124,10 +116,6 @@ if SERVER then
 		end
 	end)
 
-	hook.Add("TTT2SyncGlobals", "AddVampireGlobals", function()
-		SetGlobalInt("ttt2_vamp_bloodtime", GetConVar("ttt2_vamp_bloodtime"):GetInt())
-	end)
-
 	cvars.AddChangeCallback("ttt2_vamp_bloodtime", function(name, old, new)
 		SetGlobalInt(name, tonumber(new))
 	end, "TTT2VampBloodlust")
@@ -177,10 +165,13 @@ if SERVER then
 			dmginfo:ScaleDamage(1.125)
 
 			local oldHealth = attacker:Health()
-			local heal = math.min(oldHealth + (ply:Health() or 100), math.ceil(oldHealth + dmginfo:GetDamage() * 0.5))
+			if oldHealth < GetConVar("ttt2_vamp_maxhealth"):GetInt() then 
+				local heal = math.min(oldHealth + (ply:Health() or 100), math.ceil(oldHealth + dmginfo:GetDamage() * 0.5))
 
-			attacker:SetMaxHealth(math.max(heal, attacker:GetMaxHealth()))
-			attacker:SetHealth(heal)
+				attacker:SetMaxHealth(math.max(heal, attacker:GetMaxHealth()))
+				if heal > GetConVar("ttt2_vamp_maxhealth"):GetInt() then heal = GetConVar("ttt2_vamp_maxhealth"):GetInt() end
+				attacker:SetHealth(heal)
+			end
 		end
 	end)
 end
