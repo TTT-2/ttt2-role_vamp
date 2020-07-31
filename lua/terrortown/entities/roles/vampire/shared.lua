@@ -167,9 +167,10 @@ if SERVER then
 			local oldHealth = attacker:Health()
 			if oldHealth < GetConVar("ttt2_vamp_maxhealth"):GetInt() then 
 				local heal = math.min(oldHealth + (ply:Health() or 100), math.ceil(oldHealth + dmginfo:GetDamage() * 0.5))
-
 				attacker:SetMaxHealth(math.max(heal, attacker:GetMaxHealth()))
-				if heal > GetConVar("ttt2_vamp_maxhealth"):GetInt() then heal = GetConVar("ttt2_vamp_maxhealth"):GetInt() end
+				if heal > GetConVar("ttt2_vamp_maxhealth"):GetInt() then 
+					heal = GetConVar("ttt2_vamp_maxhealth"):GetInt() 
+				end
 				attacker:SetHealth(heal)
 			end
 		end
