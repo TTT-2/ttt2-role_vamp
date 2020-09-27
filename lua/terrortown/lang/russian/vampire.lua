@@ -5,6 +5,7 @@ L[VAMPIRE.name] = "Вампир"
 L["info_popup_" .. VAMPIRE.name] = [[Вы вампир!
 Пришло время для крови!
 Иначе вы умрёте...]]
+
 L["body_found_" .. VAMPIRE.abbr] = "Он был вампиром!"
 L["search_role_" .. VAMPIRE.abbr] = "Этот человек был вампиром ..."
 L["target_" .. VAMPIRE.name] = "Вампир"
