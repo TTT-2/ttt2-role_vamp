@@ -13,20 +13,22 @@ include("pigeon.lua")
 function ROLE:PreInitialize()
 	self.color = Color(149, 43, 37, 255)
 
-	self.abbr = "vamp" -- abbreviation
-	self.surviveBonus = 0.5 -- bonus multiplier for every survive while another player was killed
-	self.scoreKillsMultiplier = 5 -- multiplier for kill of player of another team
-	self.scoreTeamKillsMultiplier = -16 -- multiplier for teamkill
+	self.abbr = "vamp"
+	self.score.surviveBonusMultiplier = 0.5
+	self.score.timelimitMultiplier = -0.5
+	self.score.killsMultiplier = 2
+	self.score.teamKillsMultiplier = -16
+	self.score.bodyFoundMuliplier = 0
 
 	self.defaultTeam = TEAM_TRAITOR
-	self.defaultEquipment = SPECIAL_EQUIPMENT -- here you can set up your own default equipment
+	self.defaultEquipment = SPECIAL_EQUIPMENT
 
 	self.conVarData = {
-		pct = 0.1, -- necessary: percentage of getting this role selected (per player)
-		maximum = 1, -- maximum amount of roles in a round
-		minPlayers = 10, -- minimum amount of players until this role is able to get selected
-		togglable = true, -- option to toggle a role for a client if possible (F1 menu)
-		traitorButton = 1, -- can use traitor buttons
+		pct = 0.1,
+		maximum = 1,
+		minPlayers = 10,
+		togglable = true,
+		traitorButton = 1,
 		credits = 2
 	}
 end
