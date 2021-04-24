@@ -140,7 +140,7 @@ if SERVER then
 	-- if player is transformed and dies
 	hook.Add("EntityTakeDamage", "VampDeathDmg", function(target, dmginfo)
 		if IsValid(target) and target:IsPlayer() and target:IsActive() and target:Health() - dmginfo:GetDamage() <= 0
-		and target:GetSubRole() == ROLE_VAMPIRE and target:GetNWBool("transformedVamp", false)
+			and target:GetSubRole() == ROLE_VAMPIRE and target:GetNWBool("transformedVamp", false)
 		then
 			TransformToVamp(target)
 		end
@@ -161,18 +161,22 @@ if SERVER then
 		local attacker = dmginfo:GetAttacker()
 
 		if ply:IsPlayer() and IsValid(attacker) and attacker:IsPlayer()
-		and attacker:GetSubRole() == ROLE_VAMPIRE
-		and attacker:GetNWBool("InBloodlust", false)
+			and attacker:GetSubRole() == ROLE_VAMPIRE
+			and attacker:GetNWBool("InBloodlust", false)
 		then
 			dmginfo:ScaleDamage(1.125)
 
 			local oldHealth = attacker:Health()
-			if oldHealth < GetConVar("ttt2_vamp_maxhealth"):GetInt() then 
+
+			if oldHealth < GetConVar("ttt2_vamp_maxhealth"):GetInt() then
 				local heal = math.min(oldHealth + (ply:Health() or 100), math.ceil(oldHealth + dmginfo:GetDamage() * 0.5))
+
 				attacker:SetMaxHealth(math.max(heal, attacker:GetMaxHealth()))
-				if heal > GetConVar("ttt2_vamp_maxhealth"):GetInt() then 
-					heal = GetConVar("ttt2_vamp_maxhealth"):GetInt() 
+
+				if heal > GetConVar("ttt2_vamp_maxhealth"):GetInt() then
+					heal = GetConVar("ttt2_vamp_maxhealth"):GetInt()
 				end
+
 				attacker:SetHealth(heal)
 			end
 		end
