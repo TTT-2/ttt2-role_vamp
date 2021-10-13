@@ -29,7 +29,9 @@ function ROLE:PreInitialize()
 		minPlayers = 10,
 		togglable = true,
 		traitorButton = 1,
-		credits = 2
+		credits = 2,
+		creditsAwardDeadEnable = 1,
+		creditsAwardKillEnable = 1
 	}
 end
 
