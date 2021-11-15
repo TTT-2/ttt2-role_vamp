@@ -23,6 +23,8 @@ function ROLE:PreInitialize()
 	self.defaultTeam = TEAM_TRAITOR
 	self.defaultEquipment = SPECIAL_EQUIPMENT
 
+	self.isOmniscientRole = true
+
 	self.conVarData = {
 		pct = 0.1,
 		maximum = 1,
