@@ -188,6 +188,26 @@ if SERVER then
 end
 
 if CLIENT then
+	function ROLE:AddToSettingsMenu(parent)
+		local form = vgui.CreateTTT2Form(parent, "header_roles_additional")
+
+		form:MakeSlider({
+			serverConvar = "ttt2_vamp_bloodtime",
+			label = "label_vamp_bloodtime",
+			min = 5,
+			max = 300,
+			decimal = 0
+		})
+
+		form:MakeSlider({
+			serverConvar = "ttt2_vamp_maxhealth",
+			label = "label_vamp_maxhealth",
+			min = 100,
+			max = 600,
+			decimal = 0
+		})
+	end
+
 	net.Receive("TTT2VampPigeon", function()
 		local ply = LocalPlayer()
 
