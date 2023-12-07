@@ -14,3 +14,6 @@ Allerdings heilt er sich im Blutdurst auch um 50% des Schadens, den er anderen S
 -- OTHER ROLE LANGUAGE STRINGS
 L["label_vamp_bloodtime"] = "Blutdurstzeit des Vampirs"
 L["label_vamp_maxhealth"] = "Maximale Gesundheit des Vampirs"
+
+--L["label_bind_vampire_toggle"] = "Toggle transformation"
+--L["label_keyhelper_vampire"] = "Toggle vampire transformation"

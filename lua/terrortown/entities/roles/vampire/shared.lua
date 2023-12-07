@@ -217,10 +217,4 @@ if CLIENT then
 			PIGEON.Disable(ply)
 		end
 	end)
-
-	local function ToggleTransformation()
-		net.Start("TTT2RequestVampTransformation")
-		net.SendToServer()
-	end
-	bind.Register("vamptranstoggle", ToggleTransformation, nil, "Vampire", "Toggle Transformation")
 end

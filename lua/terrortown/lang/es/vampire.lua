@@ -14,3 +14,6 @@ Además, en ese estado se cura un 50% del daño que le haga a otras personas. Si
 -- OTHER ROLE LANGUAGE STRINGS
 --L["label_vamp_bloodtime"] = "Vampire bloodlust time"
 --L["label_vamp_maxhealth"] = "Vampire max health"
+
+--L["label_bind_vampire_toggle"] = "Toggle transformation"
+--L["label_keyhelper_vampire"] = "Toggle vampire transformation"
