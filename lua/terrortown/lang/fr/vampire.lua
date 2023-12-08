@@ -16,5 +16,5 @@ En soif de sang,le Vampire se soigne de 50% des dommages qu'il a causés aux aut
 --L["label_vamp_bloodtime"] = "Vampire bloodlust time"
 --L["label_vamp_maxhealth"] = "Vampire max health"
 
---L["label_bind_vampire_toggle"] = "Toggle transformation"
---L["label_keyhelper_vampire"] = "Toggle vampire transformation"
+--L["label_bind_vampire_toggle"] = "toggle transformation"
+--L["label_keyhelper_vampire"] = "toggle vampire transformation"
